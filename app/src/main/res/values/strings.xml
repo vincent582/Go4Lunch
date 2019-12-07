@@ -4,4 +4,8 @@
     <string name="facebook_application_id" translatable="false">3418046038236575</string>
     <string name="facebook_login_protocol_scheme" translatable="false"
         tools:ignore="UnusedRessources">fb3418046038236575</string>
+
+    <string name="bottom_navigation_map_view">Map View</string>
+    <string name="bottom_navigation_list_view">List View</string>
+    <string name="bottom_navigation_workmates">Workmates</string>
 </resources>

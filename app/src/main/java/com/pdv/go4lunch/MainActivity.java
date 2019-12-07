@@ -2,13 +2,22 @@ package com.pdv.go4lunch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.bottom_navigation_bar) BottomNavigationView mBottomNavigationView;
 
     private static final int RC_SIGN_IN = 123;
 
@@ -16,7 +25,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         startSignInActivity();
+        configureBottomView();
+    }
+
+    private void configureBottomView() {
+        mBottomNavigationView.setOnNavigationItemSelectedListener(item -> updateMainFragment(item.getItemId()));
+    }
+
+    private boolean updateMainFragment(int itemId) {
+        switch (itemId){
+            case R.id.map_view_button_navigation:
+                break;
+            case R.id.list_view_button_navigation:
+                break;
+            case R.id.workmates_button_navigation:
+                break;
+        }
+        return true;
     }
 
     // Create and launch sign-in intent
@@ -31,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .setTheme(R.style.AppTheme)
+                        .setTheme(R.style.LoginTheme)
                         .setIsSmartLockEnabled(false,true)
                         .build(),
                 RC_SIGN_IN);
