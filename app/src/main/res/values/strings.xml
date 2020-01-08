@@ -2,10 +2,32 @@
     <string name="app_name">Go4Lunch</string>
 
     <string name="facebook_application_id" translatable="false">3418046038236575</string>
-    <string name="facebook_login_protocol_scheme" translatable="false"
-        tools:ignore="UnusedRessources">fb3418046038236575</string>
+    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedRessources">fb3418046038236575</string>
 
     <string name="bottom_navigation_map_view">Map View</string>
     <string name="bottom_navigation_list_view">List View</string>
     <string name="bottom_navigation_workmates">Workmates</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_navigation_drawer">navigationDrawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
