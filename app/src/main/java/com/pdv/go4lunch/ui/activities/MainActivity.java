@@ -2,7 +2,15 @@ package com.pdv.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
@@ -11,16 +19,20 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private AppBarConfiguration appBarConfiguration;
     private static final int RC_SIGN_IN = 123;
@@ -32,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startSignInActivity();
+
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         configureNavigationView();
@@ -40,6 +53,30 @@ public class MainActivity extends AppCompatActivity {
         configureBottomNavigationView();
     }
 
+    private void configureNavigationView() {
+        NavigationView navView = findViewById(R.id.navigation_view);
+        NavigationUI.setupWithNavController(navView, mNavController);
+        //get header and display information.
+        View headerNavigation = navView.inflateHeaderView(R.layout.header_nav);
+        ImageView user_image = headerNavigation.findViewById(R.id.picture_user_drawer);
+        TextView name = headerNavigation.findViewById(R.id.name_user_drawer);
+        TextView mail = headerNavigation.findViewById(R.id.mail_user_drawer);
+        if (this.getCurrentUser() != null){
+            //Get picture URL from Firebase
+            if (this.getCurrentUser().getPhotoUrl() != null) {
+                Glide.with(this)
+                        .load(this.getCurrentUser().getPhotoUrl())
+                        .circleCrop()
+                        .into(user_image);
+            }
+            //Get email & username from Firebase
+            String email = TextUtils.isEmpty(this.getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : this.getCurrentUser().getEmail();
+            String username = TextUtils.isEmpty(this.getCurrentUser().getDisplayName()) ? getString(R.string.info_no_username_found) : this.getCurrentUser().getDisplayName();
+            //Update views with data
+            name.setText(username);
+            mail.setText(email);
+        }
+    }
 
     private void configureBottomNavigationView() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_bar);
@@ -57,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this,mNavController,appBarConfiguration);
     }
 
-    private void configureNavigationView() {
-        NavigationView navView = findViewById(R.id.navigation_view);
-        NavigationUI.setupWithNavController(navView, mNavController);
-    }
-
     private void configureToolbar() {
         Toolbar mToolbar = findViewById(R.id.toolbar_drawer);
         setSupportActionBar(mToolbar);
@@ -72,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
-
-
 
 
 
@@ -92,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
                         .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.ic_room_service_black_24dp)
                         .setIsSmartLockEnabled(false,true)
                         .build(),
                 RC_SIGN_IN);
@@ -114,4 +145,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Nullable
+    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
+
+    protected Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
+
+
 }
