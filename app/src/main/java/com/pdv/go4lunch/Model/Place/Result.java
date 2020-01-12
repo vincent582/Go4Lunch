@@ -3,6 +3,7 @@ package com.pdv.go4lunch.Model.Place;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.pdv.go4lunch.Model.GooglePlacesApiModel.Geometry;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +30,18 @@ public class Result implements Serializable {
     @SerializedName("photos")
     @Expose
     private List<Photo> photos = null;
+    @SerializedName("geometry")
+    @Expose
+    private Geometry geometry  = null;
+
+
+    public Geometry getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
 
 
     public String getFormattedPhoneNumber() {

@@ -3,7 +3,9 @@ package com.pdv.go4lunch.Model.GooglePlacesApiModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
 
     @SerializedName("lat")
     @Expose

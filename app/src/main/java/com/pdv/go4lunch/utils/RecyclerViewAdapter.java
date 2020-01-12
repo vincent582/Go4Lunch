@@ -1,6 +1,7 @@
 package com.pdv.go4lunch.utils;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,7 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(),DetailsActivity.class);
-                    intent.putExtra(INTENT_PLACE, (Serializable) place);
+                    intent.putExtra(INTENT_PLACE, place);
                     v.getContext().startActivity(intent);
                 }
             });

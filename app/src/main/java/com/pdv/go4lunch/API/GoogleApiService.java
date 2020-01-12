@@ -17,7 +17,8 @@ public interface GoogleApiService {
             @Query("type") String type,
             @Query("key") String key);
 
-    @GET("maps/api/place/details/json?&fields=name,rating,formatted_phone_number,formatted_address,vicinity,types,photos")
+    //https://maps.googleapis.com/maps/api/place/details/json?&fields=name,rating,formatted_phone_number,icon,geometry,vicinity,types&place_id=ChIJcc0bfjDsGGARhGn7xgEYgcs&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU
+    @GET("maps/api/place/details/json?&fields=name,rating,geometry,formatted_phone_number,formatted_address,vicinity,types,photos")
     Call<Place> getPlace(
             @Query("place_id") String id,
             @Query("key") String key);

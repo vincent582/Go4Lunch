@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.repository;
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -20,7 +21,7 @@ import retrofit2.Response;
 
 public class PlacesRepository {
 
-    private String location = "35.7602,139.6206";
+    private String location = "48.8566,2.3522";
     private String radius = "1500";
     private String type = "restaurant";
     private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
@@ -49,7 +50,6 @@ public class PlacesRepository {
 
     public MutableLiveData<List<Result>> getPlace(String id){
         Call<Place> call = mGoogleApiService.getPlace(id,key);
-        Log.d("TAG", "onResponse: Called Url::"+call.request().url());
         call.enqueue(new Callback<Place>() {
             @Override
             public void onResponse(Call<Place> call, Response<Place> response) {

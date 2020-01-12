@@ -13,7 +13,7 @@ tools:showIn="navigation_view">
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="SETTINGS" />
     <item
-        android:id="@+id/drawer_menu_logout"
+        android:id="@+id/logoutFragment"
         android:icon="@drawable/ic_power_settings_new_white_24dp"
         android:title="LOGOUT" />
 </group>
