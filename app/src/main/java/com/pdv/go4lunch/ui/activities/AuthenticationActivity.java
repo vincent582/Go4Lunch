@@ -1,20 +1,23 @@
 package com.pdv.go4lunch.ui.activities;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.snackbar.Snackbar;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -24,27 +27,20 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-        checkIfUserLoggedAndStartActivity();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        ButterKnife.bind(this);
         checkIfUserLoggedAndStartActivity();
     }
 
     public void checkIfUserLoggedAndStartActivity(){
-        if(isCurrentUserLogged()){
+        if(((Go4LunchApplication) getApplication()).isCurrentUserLogged()){
             startMainActivity();
-        }else {
-            startSignInActivity();
         }
     }
 
-    @Nullable
-    public FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
-
-    public Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
+    @OnClick(R.id.connexion_btn)
+    public void onClickConnectionButton(){
+        startSignInActivity();
+    }
 
     // Create and launch sign-in intent
     private void startSignInActivity(){
@@ -68,17 +64,19 @@ public class AuthenticationActivity extends AppCompatActivity {
     //Get Result of authentication
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (resultCode == RESULT_OK) {
-                checkIfUserLoggedAndStartActivity();
-            } else {
-                startSignInActivity();
-                Toast.makeText(this,"Vous devez être connecté pour utiliser cette application !",Toast.LENGTH_LONG).show();
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+            if (resultCode == RESULT_OK) { // SUCCESS
+                startMainActivity();
+            } else { // ERRORS
+                if (response == null) {
+                    showSnackBar(this.findViewById(R.id.authentication_layout), "Identification interrompu !");
+                } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showSnackBar(this.findViewById(R.id.authentication_layout), "Pas de connection internet !");
+                } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    showSnackBar(this.findViewById(R.id.authentication_layout), "Une erreur inconu c'est produite !");
+                }
             }
         }
     }
@@ -86,5 +84,9 @@ public class AuthenticationActivity extends AppCompatActivity {
     private void startMainActivity() {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
+    }
+
+    private void showSnackBar(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 }
