@@ -10,7 +10,6 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.snackbar.Snackbar;
-import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
@@ -19,7 +18,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AuthenticationActivity extends AppCompatActivity {
+public class AuthenticationActivity extends BaseActivity {
 
     private static final int RC_SIGN_IN = 123;
 
@@ -32,7 +31,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     public void checkIfUserLoggedAndStartActivity(){
-        if(((Go4LunchApplication) getApplication()).isCurrentUserLogged()){
+        if(isCurrentUserLogged()){
             startMainActivity();
         }
     }

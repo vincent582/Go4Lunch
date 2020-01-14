@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
@@ -21,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.MainActivity;
@@ -47,13 +49,17 @@ public class LogoutFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Nullable
+    public FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
         ButterKnife.bind(this,view);
-        currentUser = ((MainActivity)getActivity()).getCurrentUser();
+
+        currentUser = getCurrentUser();
+
         Log.e("TAG", "onCreateView: "+ currentUser );
 
         UpdateUI();
