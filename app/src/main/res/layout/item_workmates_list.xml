@@ -7,19 +7,20 @@
     android:layout_height="wrap_content">
 
     <ImageButton
-        android:id="@+id/item_picture_restaurant"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:id="@+id/item_picture_workmate"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorAccent"
+        android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars[0]"></ImageButton>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/item_name_workmate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -33,7 +34,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_picture_restaurant"
+        app:layout_constraintStart_toEndOf="@id/item_picture_workmate"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView

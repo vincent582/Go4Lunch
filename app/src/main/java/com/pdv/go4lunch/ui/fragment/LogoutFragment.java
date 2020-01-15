@@ -24,6 +24,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.MainActivity;
 
@@ -41,7 +44,6 @@ public class LogoutFragment extends Fragment {
     @BindView(R.id.user_email_logout_fr)
     TextView mEmailUser;
 
-    private FirebaseUser currentUser;
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
 
@@ -58,34 +60,44 @@ public class LogoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
         ButterKnife.bind(this,view);
 
-        currentUser = getCurrentUser();
-
-        Log.e("TAG", "onCreateView: "+ currentUser );
+        updateAgeinFirebase();
 
         UpdateUI();
         return view;
     }
 
+    private void updateAgeinFirebase() {
+        int age = 20;
+        if (getCurrentUser() != null){
+            UserHelper.updateUserAge(age,getCurrentUser().getUid());
+        }
+    }
+
     private void UpdateUI() {
-        if (currentUser != null){
+        if (getCurrentUser() != null){
             //Get picture URL from Firebase
-            if (currentUser.getPhotoUrl() != null) {
+            if (getCurrentUser().getPhotoUrl() != null) {
                 Glide.with(this)
-                        .load(currentUser.getPhotoUrl())
+                        .load(getCurrentUser().getPhotoUrl())
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPictureUser);
             }
 
             //Get email & username from Firebase
-            String email = TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
-            String username = TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
+            String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
 
+            UserHelper.getUser(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    String username = TextUtils.isEmpty(currentUser.getUserName()) ? getString(R.string.info_no_username_found) : currentUser.getUserName();
+                    mNameUser.setText(username);
+                }
+            });
             //Update views with data
-            this.mNameUser.setText(username);
             this.mEmailUser.setText(email);
         }
     }
-
 
     @OnClick(R.id.logout_btn)
     public void onClickSignOutButton() { this.signOutUserFromFirebase(); }
@@ -100,7 +112,7 @@ public class LogoutFragment extends Fragment {
                         deleteUserFromFirebase();
                     }
                 })
-                .setNegativeButton("no", null)
+                .setNegativeButton("non", null)
                 .show();
     }
 
@@ -116,10 +128,11 @@ public class LogoutFragment extends Fragment {
     }
 
     private void deleteUserFromFirebase(){
-        if (currentUser != null) {
+        if ( getCurrentUser() != null) {
             AuthUI.getInstance()
                     .delete(getContext())
                     .addOnSuccessListener(this.updateUIAfterRESTRequestsCompleted(DELETE_USER_TASK));
+            UserHelper.deleteUser(getCurrentUser().getUid());
         }
     }
 

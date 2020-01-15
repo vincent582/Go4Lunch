@@ -10,6 +10,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.snackbar.Snackbar;
+import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
@@ -45,8 +46,9 @@ public class AuthenticationActivity extends BaseActivity {
     private void startSignInActivity(){
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build()
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build()
         );
 
         startActivityForResult(
@@ -54,7 +56,7 @@ public class AuthenticationActivity extends BaseActivity {
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
                         .setTheme(R.style.LoginTheme)
-                        .setLogo(R.drawable.ic_room_service_black_24dp)
+                        .setLogo(R.drawable.ic_logo_auth)
                         .setIsSmartLockEnabled(false,true)
                         .build(),
                 RC_SIGN_IN);
@@ -67,6 +69,7 @@ public class AuthenticationActivity extends BaseActivity {
 
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
+                createUserInFirebase();
                 startMainActivity();
             } else { // ERRORS
                 if (response == null) {
@@ -77,6 +80,15 @@ public class AuthenticationActivity extends BaseActivity {
                     showSnackBar(this.findViewById(R.id.authentication_layout), "Une erreur inconu c'est produite !");
                 }
             }
+        }
+    }
+
+    private void createUserInFirebase() {
+        if(this.getCurrentUser() != null){
+            String Uid = getCurrentUser().getUid();
+            String userName = getCurrentUser().getDisplayName();
+            String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
+            UserHelper.createUser(Uid,userName,urlPicture).addOnFailureListener(this.onFailureListener());
         }
     }
 

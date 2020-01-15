@@ -38,16 +38,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Location myLocation;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mPlacesViewModel = new PlacesViewModel();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
+
+        mPlacesViewModel = new PlacesViewModel();
+
         initMap();
         return view;
     }

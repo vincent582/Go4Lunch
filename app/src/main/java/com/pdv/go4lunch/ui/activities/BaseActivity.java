@@ -6,10 +6,12 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,12 +55,22 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Location location) {
                 if (location != null){
-                    Log.e("TAG", "onSuccess getLocation: "+ location);
+                    ((Go4LunchApplication) getApplication()).setMyLocation(location);
+                    Log.e("TAG", "onSuccess setUpLocation: "+ location);
                 }
                 else{
-                    Log.e("TAG", "onSuccess: getLocation == "+location );
+                    Log.e("TAG", "onSuccess: setUpLocation: "+location );
                 }
             }
         });
+    }
+
+    public OnFailureListener onFailureListener(){
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),"Erreur :"+ e,Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 }
