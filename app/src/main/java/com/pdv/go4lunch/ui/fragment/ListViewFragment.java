@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.fragment;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
@@ -30,15 +32,15 @@ public class ListViewFragment extends Fragment {
 
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
     private PlacesViewModel mPlacesViewModel = new PlacesViewModel();
-    private Bundle myLocation;
+    private Location myLocation;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle nav = getArguments();
-        Log.i("TAG", "Get location in ListView : "+ nav);
+        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+        Log.i("TAG", "Get location in ListView : "+ myLocation);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        mPlacesViewModel.getNearestPlaces().observe(this, this::getAllPlaces);
+        mPlacesViewModel.getNearestPlaces(myLocation).observe(this, this::getAllPlaces);
         return view;
     }
 

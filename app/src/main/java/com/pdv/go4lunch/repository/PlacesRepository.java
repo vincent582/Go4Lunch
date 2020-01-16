@@ -31,8 +31,9 @@ public class PlacesRepository {
     private MutableLiveData<List<Result>> mMutableLiveDataPlaces = new MutableLiveData<>();
     private ArrayList<Result> mPlace = new ArrayList<>();
 
-    public MutableLiveData<List<Results>> getNearestPlaces() {
-        Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(location,radius,type,key);
+    public MutableLiveData<List<Results>> getNearestPlaces(Location location) {
+        String locationToString = location.getLatitude()+","+location.getLongitude();
+        Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,radius,type,key);
         call.enqueue(new Callback<GooglePlaces>() {
             @Override
             public void onResponse(Call<GooglePlaces> call, Response<GooglePlaces> response) {

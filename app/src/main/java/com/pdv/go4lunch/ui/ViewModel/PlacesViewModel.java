@@ -1,5 +1,7 @@
 package com.pdv.go4lunch.ui.ViewModel;
 
+import android.location.Location;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -17,8 +19,8 @@ public class PlacesViewModel extends ViewModel {
         mPlacesRepository = new PlacesRepository();
     }
 
-    public MutableLiveData<List<Results>> getNearestPlaces(){
-        return mPlacesRepository.getNearestPlaces();
+    public MutableLiveData<List<Results>> getNearestPlaces(Location myLocation){
+        return mPlacesRepository.getNearestPlaces(myLocation);
     }
 
     public MutableLiveData<List<Result>> getPlace(String id){

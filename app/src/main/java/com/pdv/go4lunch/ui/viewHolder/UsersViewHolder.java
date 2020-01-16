@@ -29,10 +29,13 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     public void updateWithUsers(User user) {
         if (user != null) {
             mNameWorkmate.setText(user.getUserName());
-            Glide.with(mPictureWorkmate.getContext())
-                    .load(user.getUrlPicture())
-                    .circleCrop()
-                    .into(mPictureWorkmate);
+
+            if (user.getUrlPicture() != null) {
+                Glide.with(mPictureWorkmate.getContext())
+                        .load(user.getUrlPicture())
+                        .circleCrop()
+                        .into(mPictureWorkmate);
+            }
         }
     }
 }

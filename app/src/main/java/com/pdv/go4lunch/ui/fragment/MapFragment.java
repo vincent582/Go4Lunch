@@ -89,7 +89,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void placeMarkerOnMap() {
-        mPlacesViewModel.getNearestPlaces().observe(this, new Observer<List<Results>>() {
+        mPlacesViewModel.getNearestPlaces(myLocation).observe(this, new Observer<List<Results>>() {
             @Override
             public void onChanged(List<Results> results) {
                 try {
