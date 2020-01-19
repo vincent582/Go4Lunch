@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.fragment;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,10 +23,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
+import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
+import com.pdv.go4lunch.ui.activities.DetailsActivity;
 
 import java.util.List;
+
+import static com.pdv.go4lunch.ui.activities.DetailsActivity.INTENT_PLACE;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -88,7 +93,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
@@ -105,23 +109,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     for (int i = 0; i <= results.size(); i++) {
                         Double lat = results.get(i).getGeometry().getLocation().getLat();
                         Double lng = results.get(i).getGeometry().getLocation().getLng();
-                        String placeName = results.get(i).getName();
-                        String vicinity = results.get(i).getVicinity();
+
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
-                        // Position of Marker on Map
                         markerOptions.position(latLng);
-                        // Adding Title to the Marker
-                        markerOptions.title(placeName + " : " + vicinity);
-                        // Adding Marker to the Camera.
                         Marker m = mMap.addMarker(markerOptions);
-                        // Adding colour to the marker
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        m.setTag(results.get(i).getPlaceId());
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker marker) {
+                                callApiPlaceToStartDetailsActivity(marker);
+                                return false;
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     Log.d("onResponse", "There is an error");
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    private void callApiPlaceToStartDetailsActivity(Marker marker) {
+        String placeId = marker.getTag().toString();
+        mPlacesViewModel.getPlace(placeId).observe(this, new Observer<List<Result>>() {
+            @Override
+            public void onChanged(List<Result> results) {
+                Intent intent = new Intent(getContext(),DetailsActivity.class);
+                intent.putExtra(INTENT_PLACE, results.get(0));
+                getContext().startActivity(intent);
             }
         });
     }
