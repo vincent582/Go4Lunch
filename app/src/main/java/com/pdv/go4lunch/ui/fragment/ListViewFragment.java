@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.fragment;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -33,7 +35,6 @@ public class ListViewFragment extends Fragment {
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
     private PlacesViewModel mPlacesViewModel = new PlacesViewModel();
     private Location myLocation;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +65,6 @@ public class ListViewFragment extends Fragment {
     }
 
     private void getPlaceByIds(List<Result> result) {
-        adapter.updatedPlaces(result);
+        adapter.updatedPlaces(result,myLocation);
     }
 }

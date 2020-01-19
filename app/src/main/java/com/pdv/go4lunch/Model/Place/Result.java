@@ -33,6 +33,21 @@ public class Result implements Serializable {
     @SerializedName("geometry")
     @Expose
     private Geometry geometry  = null;
+    @SerializedName("website")
+    @Expose
+    private String website;
+
+    public OpeningHours getOpeningHours() {
+        return openingHours;
+    }
+
+    public void setOpeningHours(OpeningHours openingHours) {
+        this.openingHours = openingHours;
+    }
+
+    @SerializedName("opening_hours")
+    @Expose
+    private OpeningHours openingHours;
 
 
     public Geometry getGeometry() {
@@ -100,4 +115,11 @@ public class Result implements Serializable {
         this.photos = photos;
     }
 
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 }

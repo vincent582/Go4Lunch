@@ -22,7 +22,7 @@ import retrofit2.Response;
 public class PlacesRepository {
 
     private String location = "48.8566,2.3522";
-    private String radius = "1500";
+    private String radius = "500";
     private String type = "restaurant";
     private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
 
@@ -40,6 +40,8 @@ public class PlacesRepository {
                 GooglePlaces googlePlaces = response.body();
                 if (googlePlaces != null || googlePlaces.getResults() != null){
                     nearestPlaces.setValue(googlePlaces.getResults());
+
+
                 }
             }
             @Override

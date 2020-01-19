@@ -42,13 +42,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
-
+        if (getArguments() != null){
+            myLocation = getArguments().getParcelable("LOCATION");
+            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
+        }
         mPlacesViewModel = new PlacesViewModel();
-
         initMap();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
     }
 
     private void initMap() {

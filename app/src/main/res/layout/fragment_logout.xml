@@ -19,7 +19,6 @@
         android:id="@+id/user_name_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Vincent"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="30sp" />
@@ -28,7 +27,6 @@
         android:id="@+id/user_email_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Vincent@live.fr"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="24sp" />

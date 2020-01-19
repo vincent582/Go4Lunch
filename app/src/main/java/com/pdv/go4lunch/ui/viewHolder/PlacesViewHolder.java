@@ -1,6 +1,8 @@
 package com.pdv.go4lunch.ui.viewHolder;
 
 import android.content.Intent;
+import android.location.Location;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,12 +10,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
+import com.pdv.go4lunch.utils.Utils;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,15 +41,17 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     public TextView mDistanceRestaurant;
     @BindView(R.id.item_picture_restaurent)
     public ImageView mPictureRestaurant;
-    @BindView(R.id.item_status_restaurant)
-    public TextView mStatusRestaurant;
+    @BindView(R.id.item_opening_restaurant)
+    public TextView mOpeningRestaurant;
 
     public PlacesViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    public void updateWithPlaces(Result place){
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void updateWithPlaces(Result place, Location myLocation){
+
         Log.e("TAG", "Photos : " + place.getPhotos());
         if (place.getPhotos() != null){
             String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+place.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
@@ -53,7 +64,23 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
         mTitleRestaurant.setText(place.getName());
         mAdressRestaurant.setText(place.getVicinity());
-        mStatusRestaurant.setText(place.getFormattedPhoneNumber());
+
+        /*
+        if (place.getOpeningHours().getOpenNow() != null) {
+            if (place.getOpeningHours().getOpenNow()) {
+                int day = LocalDate.now().getDayOfWeek().getValue();
+                mOpeningRestaurant.setText("Open until " + place.getOpeningHours().getPeriods().get(day).getClose().getTime());
+            } else {
+                mOpeningRestaurant.setText("Closed");
+            }
+        }
+        */
+
+        Location location = new Location("Location");
+        location.setLatitude(place.getGeometry().getLocation().getLat());
+        location.setLongitude(place.getGeometry().getLocation().getLng());
+
+        mDistanceRestaurant.setText(Utils.getDistanceBetweenLocation(myLocation,location));
 
         mItemRestaurant.setOnClickListener(new View.OnClickListener() {
             @Override

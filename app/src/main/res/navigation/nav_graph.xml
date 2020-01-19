@@ -11,9 +11,6 @@
         android:name="com.pdv.go4lunch.ui.fragment.MapFragment"
         android:label="I'm Hungry!"
         tools:layout="@layout/fragment_map">
-        <argument
-            android:name="LOCATION"
-            app:argType="android.location.Location" />
     </fragment>
 
     <fragment

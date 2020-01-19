@@ -28,6 +28,7 @@ public class AuthenticationActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         ButterKnife.bind(this);
+
         checkIfUserLoggedAndStartActivity();
     }
 
@@ -35,11 +36,15 @@ public class AuthenticationActivity extends BaseActivity {
         if(isCurrentUserLogged()){
             startMainActivity();
         }
+        else{
+            startSignInActivity();
+        }
     }
 
-    @OnClick(R.id.connexion_btn)
-    public void onClickConnectionButton(){
-        startSignInActivity();
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        checkIfUserLoggedAndStartActivity();
     }
 
     // Create and launch sign-in intent

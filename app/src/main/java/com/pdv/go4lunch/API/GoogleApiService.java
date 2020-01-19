@@ -10,7 +10,7 @@ import retrofit2.http.Query;
 
 public interface GoogleApiService {
 
-    @GET("maps/api/place/nearbysearch/json")
+    @GET("maps/api/place/nearbysearch/json?")
     Call<GooglePlaces> getNearestPlaces(
             @Query("location") String location,
             @Query("radius") String radius,
@@ -18,7 +18,7 @@ public interface GoogleApiService {
             @Query("key") String key);
 
     //https://maps.googleapis.com/maps/api/place/details/json?&fields=name,rating,formatted_phone_number,icon,geometry,vicinity,types&place_id=ChIJcc0bfjDsGGARhGn7xgEYgcs&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU
-    @GET("maps/api/place/details/json?&fields=name,rating,geometry,formatted_phone_number,formatted_address,vicinity,types,photos")
+    @GET("maps/api/place/details/json?&fields=name,rating,geometry,formatted_phone_number,formatted_address,vicinity,types,photos,website,opening_hours")
     Call<Place> getPlace(
             @Query("place_id") String id,
             @Query("key") String key);

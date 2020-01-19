@@ -36,7 +36,7 @@ public class WorkMatesFragment extends Fragment{
 
         RecyclerView mRecyclerView = view.findViewById(R.id.list_works_mates_recycler_view);
 
-        adapter = new UserRecyclerViewAdapter(generateOptionForAdapter(UserHelper.getUsersCollection()));
+        adapter = new UserRecyclerViewAdapter(generateOptionForAdapter(UserHelper.getAllUsers()));
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(adapter);

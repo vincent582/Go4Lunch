@@ -1,6 +1,5 @@
 package com.pdv.go4lunch.ui.activities;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
@@ -18,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.utils.Permission;
 
+import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -29,40 +29,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
 
-    protected void checkIfPermissions() {
-        if (Permission.checkIfPermissionGranted(this)){
-            setUpLocation();
-        }else{
-            Permission.requestPermissions(this);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
-                setUpLocation();
             } else {
                 Toast.makeText(this,"Permission Denied",Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void setUpLocation(){
-        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null){
-                    ((Go4LunchApplication) getApplication()).setMyLocation(location);
-                    Log.e("TAG", "onSuccess setUpLocation: "+ location);
-                }
-                else{
-                    Log.e("TAG", "onSuccess: setUpLocation: "+location );
-                }
+        else if (requestCode == PERMISSIONS_REQUEST_CALL_PHONE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
             }
-        });
+        }
     }
 
     public OnFailureListener onFailureListener(){

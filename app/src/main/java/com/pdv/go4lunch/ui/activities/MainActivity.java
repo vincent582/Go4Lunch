@@ -1,51 +1,28 @@
 package com.pdv.go4lunch.ui.activities;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavArgs;
-import androidx.navigation.NavArgument;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Permission;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
@@ -66,13 +43,14 @@ public class MainActivity extends BaseActivity {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this,R.id.nav_host_fragment);
 
+        getLocation();
+
         configureNavigationDrawer();
         configureToolbar();
         configureLayoutDrawer();
         configureBottomNavigationView();
-
-        checkIfPermissions();
     }
+
 
     /**************************************************************
  * Configure Navigation Layout && UI component
@@ -134,5 +112,23 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(mNavController, appBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    private void getLocation() {
+        if(Permission.checkIfLocationPermissionGranted(this)){
+            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    ((Go4LunchApplication) getApplication()).setMyLocation(location);
+                    setUpNavigationHostFragmentWithLocation(location);
+                }
+            });
+        }
+    }
+
+    private void setUpNavigationHostFragmentWithLocation(Location location) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("LOCATION",location);
+        mNavController.setGraph(R.navigation.nav_graph, bundle);
     }
 }
