@@ -21,6 +21,7 @@ import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.viewHolder.PlacesRecyclerViewAdapter;
+import com.pdv.go4lunch.utils.Permission;
 
 import java.util.List;
 
@@ -40,8 +41,10 @@ public class ListViewFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-        Log.i("TAG", "Get location in ListView : "+ myLocation);
+        if (Permission.checkIfLocationPermissionGranted(getContext())){
+            myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+            Log.i("TAG", "Get location in ListView : "+ myLocation);
+        }
     }
 
     @Override

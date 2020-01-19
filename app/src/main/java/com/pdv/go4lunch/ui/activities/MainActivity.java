@@ -123,7 +123,15 @@ public class MainActivity extends BaseActivity {
                     setUpNavigationHostFragmentWithLocation(location);
                 }
             });
+        }else{
+            Permission.requestLocationPermissions(this);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLocation();
     }
 
     private void setUpNavigationHostFragmentWithLocation(Location location) {

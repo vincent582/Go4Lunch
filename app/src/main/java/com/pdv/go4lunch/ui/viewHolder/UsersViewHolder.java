@@ -28,7 +28,9 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
 
     public void updateWithUsers(User user) {
         if (user != null) {
-            mNameWorkmate.setText(user.getUserName());
+            if (user.getUserName() != null) {
+                mNameWorkmate.setText(user.getUserName());
+            }
 
             if (user.getUrlPicture() != null) {
                 Glide.with(mPictureWorkmate.getContext())
