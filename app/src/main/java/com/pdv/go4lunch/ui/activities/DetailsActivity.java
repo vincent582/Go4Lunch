@@ -10,16 +10,29 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.Place.Result;
+import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DetailsActivity extends BaseActivity {
 
@@ -37,9 +50,14 @@ public class DetailsActivity extends BaseActivity {
     ImageView mWebsiteIcon;
     @BindView(R.id.website_textview)
     TextView mWebsiteTextView;
+    @BindView(R.id.floatingActionButton)
+    FloatingActionButton mActionButton;
+    @BindView(R.id.details_item_workmates_rv)
+    RecyclerView mRecyclerView;
 
     public static String INTENT_PLACE = "INTENT_PLACE";
     private Result place;
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +68,34 @@ public class DetailsActivity extends BaseActivity {
         if(getIntent().hasExtra(INTENT_PLACE)){
             place = (Result) getIntent().getSerializableExtra(INTENT_PLACE);
         }
+
+        UserRecyclerViewAdapter adapter = new UserRecyclerViewAdapter(generateOptionForAdapter(UserHelper.getAllUserForRestaurant(place.getName())));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(adapter);
+
+        getUserFromFirebase();
+
         updateView();
+    }
+
+    private FirestoreRecyclerOptions<User> generateOptionForAdapter(Query query) {
+        return new FirestoreRecyclerOptions.Builder<User>()
+                .setQuery(query,User.class)
+                .setLifecycleOwner(this)
+                .build();
+    }
+
+    private void getUserFromFirebase() {
+        if (getCurrentUser() != null){
+            Task<DocumentSnapshot> user = UserHelper.getUser(getCurrentUser().getUid());
+            user.addOnSuccessListener(this, new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    mUser = documentSnapshot.toObject(User.class);
+                    setActionButtonImage();
+                }
+            });
+        }
     }
 
     private void updateView() {
@@ -66,6 +111,13 @@ public class DetailsActivity extends BaseActivity {
         }
         setUpPhoneIcon();
         setUpWebsiteIcon();
+
+        mActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateRestaurantInFirebase();
+            }
+        });
     }
 
     private void setUpWebsiteIcon() {
@@ -144,6 +196,29 @@ public class DetailsActivity extends BaseActivity {
         }
         else{
             Permission.requestCallingPermissions(this);
+        }
+    }
+
+
+    private void setActionButtonImage() {
+        Log.e("TAG", "setActionButtonImage: "+ mUser.getRestaurant());
+        Log.e("TAG", "setActionButtonImage: "+ place.getName());
+        if (mUser.getRestaurant().equals(place.getName())){
+            mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.fui_ic_check_circle_black_128dp));
+        }else{
+            mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_btn_24dp));
+        }
+    }
+
+
+    private void updateRestaurantInFirebase() {
+        if (mUser.getRestaurant().equals(place.getName())){
+            Toast.makeText(this,"Vous avez déjà choisi ce restaurant", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            UserHelper.updateUserRestaurant(place.getName(),getCurrentUser().getUid());
+            Toast.makeText(this,"Vous avez choisi ce restaurant", Toast.LENGTH_SHORT).show();
+            getUserFromFirebase();
         }
     }
 }

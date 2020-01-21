@@ -5,7 +5,7 @@ public class User {
     private String Uid;
     private String userName;
     private String urlPicture;
-    private int age;
+    private String restaurant;
 
     public User (){}
 
@@ -40,11 +40,11 @@ public class User {
         this.urlPicture = urlPicture;
     }
 
-    public int getAge() {
-        return age;
+    public String getRestaurant() {
+        return restaurant;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setRestaurant(String restaurant) {
+        this.restaurant = restaurant;
     }
 }

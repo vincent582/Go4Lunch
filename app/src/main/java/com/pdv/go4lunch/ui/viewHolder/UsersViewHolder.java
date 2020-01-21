@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.viewHolder;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,10 +27,14 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
+    @SuppressLint("ResourceAsColor")
     public void updateWithUsers(User user) {
         if (user != null) {
-            if (user.getUserName() != null) {
-                mNameWorkmate.setText(user.getUserName());
+            if (user.getRestaurant() != null) {
+                mNameWorkmate.setText(user.getUserName()+ " is eating at "+ user.getRestaurant());
+                mNameWorkmate.setTextColor(R.color.quantum_black_secondary_text);
+            }else {
+                mNameWorkmate.setText(user.getUserName()+ " Hasn't decided yet");
             }
 
             if (user.getUrlPicture() != null) {

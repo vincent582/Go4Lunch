@@ -60,17 +60,8 @@ public class LogoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
         ButterKnife.bind(this,view);
 
-        updateAgeinFirebase();
-
         UpdateUI();
         return view;
-    }
-
-    private void updateAgeinFirebase() {
-        int age = 20;
-        if (getCurrentUser() != null){
-            UserHelper.updateUserAge(age,getCurrentUser().getUid());
-        }
     }
 
     private void UpdateUI() {

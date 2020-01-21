@@ -25,8 +25,8 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(Uid).get();
     }
 
-    public static Task<Void> updateUserAge(int age,String Uid){
-        return UserHelper.getUsersCollection().document(Uid).update("age",age);
+    public static Task<Void> updateUserRestaurant(String restaurant,String Uid){
+        return UserHelper.getUsersCollection().document(Uid).update("restaurant",restaurant);
     }
 
     public static Task<Void> deleteUser(String Uid){
@@ -35,5 +35,10 @@ public class UserHelper {
 
     public static Query getAllUsers(){
         return UserHelper.getUsersCollection();
+    }
+
+    public static Query getAllUserForRestaurant(String restaurant){
+        return UserHelper.getUsersCollection()
+                .whereEqualTo("restaurant",restaurant);
     }
 }

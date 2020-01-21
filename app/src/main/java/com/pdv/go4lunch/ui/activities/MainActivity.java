@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -24,7 +27,7 @@ import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Permission;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements NavController.OnDestinationChangedListener {
 
     //For Navigation
     private NavController mNavController;
@@ -41,7 +44,7 @@ public class MainActivity extends BaseActivity {
         current_user = getCurrentUser();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mNavController = Navigation.findNavController(this,R.id.nav_host_fragment);
+        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         getLocation();
 
@@ -53,8 +56,8 @@ public class MainActivity extends BaseActivity {
 
 
     /**************************************************************
- * Configure Navigation Layout && UI component
- ***************************************************************/
+     * Configure Navigation Layout && UI component
+     ***************************************************************/
 
     public void configureNavigationDrawer() {
         NavigationView navView = findViewById(R.id.navigation_drawer);
@@ -70,7 +73,7 @@ public class MainActivity extends BaseActivity {
         TextView mail = headerNavigation.findViewById(R.id.mail_user_drawer);
 
         //Then if user is authenticated with Firebase, display information.
-        if (current_user != null){
+        if (current_user != null) {
             //Get picture URL from Firebase
             if (current_user.getPhotoUrl() != null) {
                 Glide.with(this)
@@ -96,11 +99,11 @@ public class MainActivity extends BaseActivity {
         DrawerLayout mDrawerLayout = findViewById(R.id.activity_main_layout_drawer);
         //Configure appBar to have hamburger icon on fragments
         appBarConfiguration =
-                new AppBarConfiguration.Builder(R.id.mapFragment,R.id.listViewFragment
-                        ,R.id.workMatesFragment, R.id.yourLunchFragment, R.id.settingsFragment,R.id.logoutFragment)
+                new AppBarConfiguration.Builder(R.id.mapFragment, R.id.listViewFragment
+                        , R.id.workMatesFragment, R.id.yourLunchFragment, R.id.settingsFragment, R.id.logoutFragment)
                         .setDrawerLayout(mDrawerLayout)
                         .build();
-        NavigationUI.setupActionBarWithNavController(this,mNavController,appBarConfiguration);
+        NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration);
     }
 
     private void configureToolbar() {
@@ -115,7 +118,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getLocation() {
-        if(Permission.checkIfLocationPermissionGranted(this)){
+        if (Permission.checkIfLocationPermissionGranted(this)) {
             mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
@@ -123,7 +126,7 @@ public class MainActivity extends BaseActivity {
                     setUpNavigationHostFragmentWithLocation(location);
                 }
             });
-        }else{
+        } else {
             Permission.requestLocationPermissions(this);
         }
     }
@@ -136,7 +139,15 @@ public class MainActivity extends BaseActivity {
 
     private void setUpNavigationHostFragmentWithLocation(Location location) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("LOCATION",location);
+        bundle.putParcelable("LOCATION", location);
         mNavController.setGraph(R.navigation.nav_graph, bundle);
     }
+
+    @Override
+    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+        if (controller.popBackStack(destination.getId(),true)){
+            controller.navigate(destination.getId());
+        }
+    }
+
 }
