@@ -37,6 +37,8 @@ public class Result implements Serializable {
     @Expose
     private String website;
 
+    private int distance;
+
     public OpeningHours getOpeningHours() {
         return openingHours;
     }
@@ -121,5 +123,13 @@ public class Result implements Serializable {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

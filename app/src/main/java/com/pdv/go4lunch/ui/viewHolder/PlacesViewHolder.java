@@ -53,7 +53,7 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void updateWithPlaces(Result place, Location myLocation){
+    public void updateWithPlaces(Result place){
 
         Log.e("TAG", "Photos : " + place.getPhotos());
         if (place.getPhotos() != null){
@@ -87,7 +87,7 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
             mOpeningRestaurant.setText("");
         }
 
-        mDistanceRestaurant.setText(Utils.getDistanceBetweenLocation(myLocation,place)+"m");
+        mDistanceRestaurant.setText(place.getDistance()+"m");
 
         mItemRestaurant.setOnClickListener(new View.OnClickListener() {
             @Override

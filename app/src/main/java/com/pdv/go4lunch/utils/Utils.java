@@ -8,7 +8,10 @@ import com.pdv.go4lunch.Model.Place.Result;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public abstract class Utils {
 
@@ -53,5 +56,14 @@ public abstract class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void sortByDistance(List<Result> results) {
+        Collections.sort(results, new Comparator<Result>() {
+            @Override
+            public int compare(Result o1, Result o2) {
+                return o1.getDistance() - o2.getDistance();
+            }
+        });
     }
 }

@@ -22,6 +22,7 @@ import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.viewHolder.PlacesRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
+import com.pdv.go4lunch.utils.Utils;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class ListViewFragment extends Fragment {
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
     private PlacesViewModel mPlacesViewModel = new PlacesViewModel();
     private Location myLocation;
+
+    private List<Result> mResults;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +72,15 @@ public class ListViewFragment extends Fragment {
     }
 
     private void getPlaceByIds(List<Result> result) {
-        adapter.updatedPlaces(result,myLocation);
+        for (Result place : result) {
+            place.setDistance(Utils.getDistanceBetweenLocation(myLocation,place));
+        }
+        mResults = result;
+        Utils.sortByDistance(mResults);
+        updateUi();
+    }
+
+    private void updateUi(){
+        adapter.updatedPlaces(mResults);
     }
 }

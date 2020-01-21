@@ -19,13 +19,11 @@ import java.util.List;
 public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHolder> {
 
     private List<Result> mPlaces;
-    private Location myLocation;
 
     public PlacesRecyclerViewAdapter(){}
 
-    public void updatedPlaces(List<Result> places, Location myLocation){
+    public void updatedPlaces(List<Result> places){
         this.mPlaces = places;
-        this.myLocation = myLocation;
         notifyDataSetChanged();
     }
 
@@ -39,7 +37,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHo
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull PlacesViewHolder viewHolder , int position) {
-        viewHolder.updateWithPlaces(this.mPlaces.get(position),myLocation);
+        viewHolder.updateWithPlaces(this.mPlaces.get(position));
     }
 
     @Override
