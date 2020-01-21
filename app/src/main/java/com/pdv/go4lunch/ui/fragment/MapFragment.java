@@ -1,6 +1,8 @@
 package com.pdv.go4lunch.ui.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -113,9 +115,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         markerOptions.position(latLng);
+
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red));
+
                         Marker m = mMap.addMarker(markerOptions);
                         m.setTag(results.get(i).getPlaceId());
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
 
                         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override

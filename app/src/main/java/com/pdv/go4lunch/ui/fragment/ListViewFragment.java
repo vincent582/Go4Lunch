@@ -63,6 +63,7 @@ public class ListViewFragment extends Fragment {
 
     private void getAllPlaces(List<Results> results) {
         for (Results result: results) {
+            Log.e("TAG", "getAllPlaces: "+result.getName()+" , " +result.getPlaceId());
             mPlacesViewModel.getPlace(result.getPlaceId()).observe(this,this::getPlaceByIds);
         }
     }
