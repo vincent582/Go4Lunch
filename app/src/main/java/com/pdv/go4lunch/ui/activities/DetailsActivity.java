@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -201,9 +202,7 @@ public class DetailsActivity extends BaseActivity {
 
 
     private void setActionButtonImage() {
-        Log.e("TAG", "setActionButtonImage: "+ mUser.getRestaurant());
-        Log.e("TAG", "setActionButtonImage: "+ place.getName());
-        if (mUser.getRestaurant().equals(place.getName())){
+        if (mUser.getRestaurant() != null && mUser.getRestaurant().equals(place.getName())){
             mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.fui_ic_check_circle_black_128dp));
         }else{
             mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_btn_24dp));
@@ -212,7 +211,7 @@ public class DetailsActivity extends BaseActivity {
 
 
     private void updateRestaurantInFirebase() {
-        if (mUser.getRestaurant().equals(place.getName())){
+        if (mUser.getRestaurant() != null && mUser.getRestaurant().equals(place.getName())){
             Toast.makeText(this,"Vous avez déjà choisi ce restaurant", Toast.LENGTH_SHORT).show();
         }
         else {

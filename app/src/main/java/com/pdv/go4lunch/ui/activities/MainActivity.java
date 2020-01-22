@@ -1,11 +1,13 @@
 package com.pdv.go4lunch.ui.activities;
 
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +29,10 @@ import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Permission;
 
-public class MainActivity extends BaseActivity implements NavController.OnDestinationChangedListener {
+import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
+import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
+
+public class MainActivity extends BaseActivity {
 
     //For Navigation
     private NavController mNavController;
@@ -131,12 +136,6 @@ public class MainActivity extends BaseActivity implements NavController.OnDestin
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getLocation();
-    }
-
     private void setUpNavigationHostFragmentWithLocation(Location location) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("LOCATION", location);
@@ -144,10 +143,20 @@ public class MainActivity extends BaseActivity implements NavController.OnDestin
     }
 
     @Override
-    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-        if (controller.popBackStack(destination.getId(),true)){
-            controller.navigate(destination.getId());
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLocation();
+                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this,"Permission Denied",Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == PERMISSIONS_REQUEST_CALL_PHONE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
 }

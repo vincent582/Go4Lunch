@@ -1,6 +1,5 @@
 package com.pdv.go4lunch.ui.viewHolder;
 
-import android.location.Location;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.viewHolder.PlacesViewHolder;
 
 import java.util.List;
 

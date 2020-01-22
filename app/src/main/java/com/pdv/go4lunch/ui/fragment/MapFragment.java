@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -23,9 +24,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Place.Result;
+import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
@@ -44,26 +50,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private PlacesViewModel mPlacesViewModel;
     private Location myLocation;
 
+    private List<User> mUsers;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        if (getArguments() != null){
-            myLocation = getArguments().getParcelable("LOCATION");
-            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
-        }
+        getUsersFromFirebase();
+
+        updateLocation();
+
         mPlacesViewModel = new PlacesViewModel();
         initMap();
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
+    private void getUsersFromFirebase() {
+        UserHelper.getAllUsers().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                mUsers =  queryDocumentSnapshots.toObjects(User.class);
+            }
+        });
     }
+
+    private void updateLocation(){
+        if (getArguments() != null){
+            myLocation = getArguments().getParcelable("LOCATION");
+            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
+        }else{
+            myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+            Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
+        }
+    }
+
 
     private void initMap() {
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
@@ -116,7 +138,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         LatLng latLng = new LatLng(lat, lng);
                         markerOptions.position(latLng);
 
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red));
+                        for (User user: mUsers) {
+                            if (user.getRestaurant() != null){
+                                if (user.getRestaurant().equals(results.get(i).getName())){
+                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
+                                }else{
+                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red));
+                                }
+                            }
+                        }
 
                         Marker m = mMap.addMarker(markerOptions);
                         m.setTag(results.get(i).getPlaceId());
@@ -137,13 +167,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    //TODO change api call detail to one Object instead of list
     private void callApiPlaceToStartDetailsActivity(Marker marker) {
         String placeId = marker.getTag().toString();
+        Log.e("TAG", "callApiPlaceToStartDetailsActivity: "+ marker.getTag().toString());
         mPlacesViewModel.getPlace(placeId).observe(this, new Observer<List<Result>>() {
             @Override
             public void onChanged(List<Result> results) {
                 Intent intent = new Intent(getContext(),DetailsActivity.class);
-                intent.putExtra(INTENT_PLACE, results.get(0));
+                intent.putExtra(INTENT_PLACE, results.get(results.size()-1));
                 getContext().startActivity(intent);
             }
         });
