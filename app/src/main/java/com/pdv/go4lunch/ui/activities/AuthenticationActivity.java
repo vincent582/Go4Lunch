@@ -2,6 +2,7 @@ package com.pdv.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.API.UserHelper;
@@ -24,7 +26,6 @@ import butterknife.OnClick;
 public class AuthenticationActivity extends BaseActivity {
 
     private static final int RC_SIGN_IN = 123;
-    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +33,16 @@ public class AuthenticationActivity extends BaseActivity {
         setContentView(R.layout.activity_authentication);
         ButterKnife.bind(this);
 
-        currentUser = ((Go4LunchApplication)getApplication()).getCurrentUser();
-
         checkIfUserLoggedAndStartActivity();
     }
 
     public void checkIfUserLoggedAndStartActivity(){
-        if(currentUser != null){
+        if(((Go4LunchApplication)getApplication()).isCurrentUserLogged()){
             startMainActivity();
         }
         else{
             startSignInActivity();
         }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        checkIfUserLoggedAndStartActivity();
     }
 
     // Create and launch sign-in intent
@@ -76,11 +69,9 @@ public class AuthenticationActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IdpResponse response = IdpResponse.fromResultIntent(data);
-
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
                 createUserInFirebase();
-                startMainActivity();
             } else { // ERRORS
                 if (response == null) {
                     showSnackBar(this.findViewById(R.id.authentication_layout), "Identification interrompu !");
@@ -94,11 +85,17 @@ public class AuthenticationActivity extends BaseActivity {
     }
 
     private void createUserInFirebase() {
-        if(this.currentUser != null){
+        FirebaseUser currentUser = ((Go4LunchApplication) getApplication()).getCurrentUser();
+        if(currentUser != null){
             String Uid = currentUser.getUid();
             String userName = currentUser.getDisplayName();
             String urlPicture = (currentUser.getPhotoUrl() != null) ? currentUser.getPhotoUrl().toString() : null;
-            UserHelper.createUser(Uid,userName,urlPicture).addOnFailureListener(this.onFailureListener());
+            UserHelper.createUser(Uid,userName,urlPicture).addOnFailureListener(this.onFailureListener()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    checkIfUserLoggedAndStartActivity();
+                }
+            });
         }
     }
 

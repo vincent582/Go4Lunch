@@ -1,17 +1,13 @@
 package com.pdv.go4lunch.ui.fragment;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +18,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.MainActivity;
@@ -46,13 +42,7 @@ public class LogoutFragment extends Fragment {
 
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
-
-    public LogoutFragment() {
-        // Required empty public constructor
-    }
-
-    @Nullable
-    public FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
+    private FirebaseUser currentUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,33 +50,29 @@ public class LogoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
         ButterKnife.bind(this,view);
 
-        UpdateUI();
+        currentUser = ((Go4LunchApplication)getActivity().getApplication()).getCurrentUser();
+
+        updateUI();
         return view;
     }
 
-    private void UpdateUI() {
-        if (getCurrentUser() != null){
+    private void updateUI() {
+        if (currentUser != null){
             //Get picture URL from Firebase
-            if (getCurrentUser().getPhotoUrl() != null) {
+            if (currentUser.getPhotoUrl() != null) {
                 Glide.with(this)
-                        .load(getCurrentUser().getPhotoUrl())
+                        .load(currentUser.getPhotoUrl())
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPictureUser);
             }
 
-            //Get email & username from Firebase
-            String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
+            //Get email & username
+            String email = TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
+            String name = TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
 
-            UserHelper.getUser(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    User currentUser = documentSnapshot.toObject(User.class);
-                    String username = TextUtils.isEmpty(currentUser.getUserName()) ? getString(R.string.info_no_username_found) : currentUser.getUserName();
-                    mNameUser.setText(username);
-                }
-            });
             //Update views with data
             this.mEmailUser.setText(email);
+            this.mNameUser.setText(name);
         }
     }
 
@@ -119,11 +105,11 @@ public class LogoutFragment extends Fragment {
     }
 
     private void deleteUserFromFirebase(){
-        if ( getCurrentUser() != null) {
+        if (currentUser != null) {
             AuthUI.getInstance()
                     .delete(getContext())
                     .addOnSuccessListener(this.updateUIAfterRESTRequestsCompleted(DELETE_USER_TASK));
-            UserHelper.deleteUser(getCurrentUser().getUid());
+            UserHelper.deleteUser(currentUser.getUid());
         }
     }
 

@@ -19,33 +19,43 @@
         android:id="@+id/user_name_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@android:string/unknownName"
         android:textAlignment="center"
         android:textColor="@android:color/black"
-        android:textSize="30sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/user_email_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/fui_email_field_name"
         android:textAlignment="center"
         android:textColor="@android:color/black"
-        android:textSize="24sp" />
+        android:textSize="14sp"
+        android:textStyle="italic" />
 
     <Button
         android:id="@+id/logout_btn"
         style="@style/FirebaseUI.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/colorPrimary"
-        android:text="Deconection" />
+        android:text="Deconection"
+        android:textAlignment="center" />
 
     <Button
         android:id="@+id/delette_btn"
         style="@style/FirebaseUI.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
         android:background="@color/colorPrimaryDark"
         android:text="Supprimer" />
 
