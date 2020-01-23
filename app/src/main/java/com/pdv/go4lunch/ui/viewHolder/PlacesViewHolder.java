@@ -13,10 +13,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.Place.Result;
+import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
 import com.pdv.go4lunch.utils.Utils;
@@ -34,7 +42,7 @@ import static com.pdv.go4lunch.ui.activities.DetailsActivity.INTENT_PLACE;
 public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.item_restaurant)
-    public LinearLayout mItemRestaurant;
+    public ConstraintLayout mItemRestaurant;
     @BindView(R.id.item_title_restaurant)
     public TextView mTitleRestaurant;
     @BindView(R.id.item_adress_restaurant)

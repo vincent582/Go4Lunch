@@ -1,65 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_restaurant"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
+    android:layout_gravity="fill|fill_horizontal"
+    android:gravity="fill|center_vertical"
     android:orientation="horizontal"
-    android:padding="7dp">
+    android:padding="4dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_title_restaurant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="fill|fill_horizontal"
+            android:singleLine="true"
             android:text="Title"
             android:textAlignment="textStart"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textStyle="bold"></TextView>
 
         <TextView
             android:id="@+id/item_adress_restaurant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="French - 12 rue du fauboug Poissonnière"
-            android:textAlignment="textStart"></TextView>
+            android:textAlignment="textStart"
+            android:textSize="12sp"></TextView>
 
         <TextView
             android:id="@+id/item_opening_restaurant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Open until 7pm"></TextView>
+            android:layout_weight="1"
+            android:text="Open until 7pm"
+            android:textSize="12sp"
+            android:textStyle="italic"></TextView>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:orientation="horizontal">
+        android:id="@+id/linearLayout3"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_picture_restaurent"
+        app:layout_constraintStart_toEndOf="@id/linearLayout2"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_distance_restaurant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="120m"
+            android:textAlignment="textStart"></TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/ic_people_black_24dp" />
+
+            <TextView
+                android:id="@+id/te"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="2dp"
+                android:text="(1)"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="120m"></TextView>
+            android:layout_weight="1">
 
-        <ImageButton
-            android:id="@+id/item_picture_restaurent"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_vertical"
-            android:background="#00FFFFFF"
-            android:scaleType="centerCrop"
-            tools:src="@tools:sample/backgrounds/scenic[3]"></ImageButton>
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="@android:style/Widget.Holo.Light.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:numStars="3"
+                android:progressTint="@color/quantum_yellowA700"
+                android:rating="1" />
+        </FrameLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/item_picture_restaurent"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="#00FFFFFF"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout3"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/backgrounds/scenic[3]"></ImageButton>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
