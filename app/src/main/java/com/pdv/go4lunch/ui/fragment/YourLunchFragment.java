@@ -6,12 +6,14 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +41,8 @@ public class YourLunchFragment extends Fragment {
 
     @BindView(R.id.your_lunch_details_ll)
     LinearLayout mLinearLayoutYourLunch;
+    @BindView(R.id.your_lunch_details_empty_ll)
+    LinearLayout mLinearLayoutYourLunchEmpty;
     @BindView(R.id.your_lunch_restaurant_picture_iv)
     ImageView mPictureRestaurant;
     @BindView(R.id.your_lunch_restaurant_name_tv)
@@ -47,6 +51,8 @@ public class YourLunchFragment extends Fragment {
     TextView mAdressRestaurant;
     @BindView(R.id.your_lunch_restaurant_website_tv)
     TextView mWebsiteRestaurant;
+    @BindView(R.id.your_lunch_cancel_btn)
+    Button mCancelBtn;
 
     private FirebaseUser currentUser;
     private PlacesViewModel mPlacesViewModel;
@@ -57,6 +63,13 @@ public class YourLunchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         currentUser = ((Go4LunchApplication)getActivity().getApplication()).getCurrentUser();
         mPlacesViewModel = new PlacesViewModel();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_your_lunch, container, false);
+        ButterKnife.bind(this,view);
 
         UserHelper.getUser(currentUser.getUid()).addOnSuccessListener(getActivity(), new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -65,13 +78,7 @@ public class YourLunchFragment extends Fragment {
                 getPlace(user);
             }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_your_lunch, container, false);
-        ButterKnife.bind(this,view);
         return view;
     }
 
@@ -98,7 +105,18 @@ public class YourLunchFragment extends Fragment {
             mNameRestaurant.setText(place.getName());
             mAdressRestaurant.setText(place.getVicinity());
             mWebsiteRestaurant.setText(place.getWebsite());
+
+            mCancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserHelper.deleteRestaurantFromUser(currentUser.getUid());
+                    mLinearLayoutYourLunch.setVisibility(View.GONE);
+                    NavHostFragment.findNavController(getParentFragment()).navigate(R.id.yourLunchFragment);
+                }
+            });
             mLinearLayoutYourLunch.setVisibility(View.VISIBLE);
+        }else{
+            mLinearLayoutYourLunchEmpty.setVisibility(View.VISIBLE);
         }
     }
 }

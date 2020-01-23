@@ -34,7 +34,11 @@
         android:id="@+id/yourLunchFragment"
         android:name="com.pdv.go4lunch.ui.fragment.YourLunchFragment"
         android:label="Your Lunch"
-        tools:layout="@layout/fragment_your_lunch" />
+        tools:layout="@layout/fragment_your_lunch" >
+        <action
+            android:id="@+id/action_yourLunchFragment_self"
+            app:destination="@+id/yourLunchFragment" />
+    </fragment>
     <fragment
         android:id="@+id/logoutFragment"
         android:name="com.pdv.go4lunch.ui.fragment.LogoutFragment"

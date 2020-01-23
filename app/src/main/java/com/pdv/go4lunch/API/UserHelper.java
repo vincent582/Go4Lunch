@@ -1,12 +1,18 @@
 package com.pdv.go4lunch.API;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.Model.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserHelper {
 
@@ -35,6 +41,15 @@ public class UserHelper {
 
     public static Task<Void> deleteUser(String Uid){
         return UserHelper.getUsersCollection().document(Uid).delete();
+    }
+
+    public static Task<Void> deleteRestaurantFromUser(String Uid){
+        DocumentReference docRef = UserHelper.getUsersCollection().document(Uid);
+        // Remove the 'restaurant' field from the document
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("restaurant", FieldValue.delete());
+        updates.put("restaurantId", FieldValue.delete());
+        return docRef.update(updates);
     }
 
     public static Query getAllUsers(){
