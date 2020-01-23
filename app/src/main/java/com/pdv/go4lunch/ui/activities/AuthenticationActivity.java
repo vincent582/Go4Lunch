@@ -10,7 +10,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import butterknife.OnClick;
 public class AuthenticationActivity extends BaseActivity {
 
     private static final int RC_SIGN_IN = 123;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +32,13 @@ public class AuthenticationActivity extends BaseActivity {
         setContentView(R.layout.activity_authentication);
         ButterKnife.bind(this);
 
+        currentUser = ((Go4LunchApplication)getApplication()).getCurrentUser();
+
         checkIfUserLoggedAndStartActivity();
     }
 
     public void checkIfUserLoggedAndStartActivity(){
-        if(isCurrentUserLogged()){
+        if(currentUser != null){
             startMainActivity();
         }
         else{
@@ -89,10 +94,10 @@ public class AuthenticationActivity extends BaseActivity {
     }
 
     private void createUserInFirebase() {
-        if(this.getCurrentUser() != null){
-            String Uid = getCurrentUser().getUid();
-            String userName = getCurrentUser().getDisplayName();
-            String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
+        if(this.currentUser != null){
+            String Uid = currentUser.getUid();
+            String userName = currentUser.getDisplayName();
+            String urlPicture = (currentUser.getPhotoUrl() != null) ? currentUser.getPhotoUrl().toString() : null;
             UserHelper.createUser(Uid,userName,urlPicture).addOnFailureListener(this.onFailureListener());
         }
     }

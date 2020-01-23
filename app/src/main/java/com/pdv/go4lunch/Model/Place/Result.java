@@ -9,6 +9,10 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Result implements Serializable {
+
+    @SerializedName("place_id")
+    @Expose
+    private String place_id;
     @SerializedName("formatted_phone_number")
     @Expose
     private String formattedPhoneNumber;
@@ -131,5 +135,13 @@ public class Result implements Serializable {
 
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    public String getPlace_id() {
+        return place_id;
+    }
+
+    public void setPlace_id(String place_id) {
+        this.place_id = place_id;
     }
 }

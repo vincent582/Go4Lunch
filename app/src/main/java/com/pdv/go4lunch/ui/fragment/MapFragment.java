@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -24,8 +24,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Go4LunchApplication;
@@ -49,43 +51,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private PlacesViewModel mPlacesViewModel;
     private Location myLocation;
-
-    private List<User> mUsers;
-
+    private MarkerOptions markerOptions = new MarkerOptions();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        getUsersFromFirebase();
-
-        updateLocation();
-
+        if (getArguments() != null){
+            myLocation = getArguments().getParcelable("LOCATION");
+            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
+        }
         mPlacesViewModel = new PlacesViewModel();
+
         initMap();
         return view;
     }
 
-    private void getUsersFromFirebase() {
-        UserHelper.getAllUsers().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                mUsers =  queryDocumentSnapshots.toObjects(User.class);
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
+        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
     }
-
-    private void updateLocation(){
-        if (getArguments() != null){
-            myLocation = getArguments().getParcelable("LOCATION");
-            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
-        }else{
-            myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-            Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
-        }
-    }
-
 
     private void initMap() {
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
@@ -134,19 +122,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         Double lat = results.get(i).getGeometry().getLocation().getLat();
                         Double lng = results.get(i).getGeometry().getLocation().getLng();
 
-                        MarkerOptions markerOptions = new MarkerOptions();
                         LatLng latLng = new LatLng(lat, lng);
                         markerOptions.position(latLng);
 
-                        for (User user: mUsers) {
-                            if (user.getRestaurant() != null){
-                                if (user.getRestaurant().equals(results.get(i).getName())){
-                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
+                        UserHelper.getAllUserForRestaurant(results.get(i).getName())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (!task.getResult().isEmpty()){
+                                    for (QueryDocumentSnapshot snapshot : task.getResult()){
+                                        Log.e("TAG", "onComplete: "+snapshot.toObject(User.class).getRestaurant());
+                                    }
+                                    markerOptions.icon((BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red)));
                                 }else{
-                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red));
+                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
                                 }
                             }
-                        }
+                        });
 
                         Marker m = mMap.addMarker(markerOptions);
                         m.setTag(results.get(i).getPlaceId());
@@ -167,18 +160,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    //TODO change api call detail to one Object instead of list
     private void callApiPlaceToStartDetailsActivity(Marker marker) {
         String placeId = marker.getTag().toString();
-        Log.e("TAG", "callApiPlaceToStartDetailsActivity: "+ marker.getTag().toString());
         mPlacesViewModel.getPlace(placeId).observe(this, new Observer<List<Result>>() {
             @Override
             public void onChanged(List<Result> results) {
                 Intent intent = new Intent(getContext(),DetailsActivity.class);
-                intent.putExtra(INTENT_PLACE, results.get(results.size()-1));
+                intent.putExtra(INTENT_PLACE, results.get(0));
                 getContext().startActivity(intent);
             }
         });
     }
 }
-

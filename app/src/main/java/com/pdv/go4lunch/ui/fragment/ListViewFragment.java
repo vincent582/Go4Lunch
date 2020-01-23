@@ -36,9 +36,11 @@ public class ListViewFragment extends Fragment {
 
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
     private PlacesViewModel mPlacesViewModel = new PlacesViewModel();
+
     private Location myLocation;
 
     private List<Result> mResults;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

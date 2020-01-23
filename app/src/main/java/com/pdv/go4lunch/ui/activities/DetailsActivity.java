@@ -22,9 +22,11 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
@@ -59,12 +61,15 @@ public class DetailsActivity extends BaseActivity {
     public static String INTENT_PLACE = "INTENT_PLACE";
     private Result place;
     private User mUser;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
+
+        currentUser = ((Go4LunchApplication) getApplication()).getCurrentUser();
 
         if(getIntent().hasExtra(INTENT_PLACE)){
             place = (Result) getIntent().getSerializableExtra(INTENT_PLACE);
@@ -87,8 +92,8 @@ public class DetailsActivity extends BaseActivity {
     }
 
     private void getUserFromFirebase() {
-        if (getCurrentUser() != null){
-            Task<DocumentSnapshot> user = UserHelper.getUser(getCurrentUser().getUid());
+        if (currentUser != null){
+            Task<DocumentSnapshot> user = UserHelper.getUser(currentUser.getUid());
             user.addOnSuccessListener(this, new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -215,7 +220,8 @@ public class DetailsActivity extends BaseActivity {
             Toast.makeText(this,"Vous avez déjà choisi ce restaurant", Toast.LENGTH_SHORT).show();
         }
         else {
-            UserHelper.updateUserRestaurant(place.getName(),getCurrentUser().getUid());
+            UserHelper.updateUserRestaurant(place.getName(),currentUser.getUid());
+            UserHelper.updateUserRestaurantId(place.getPlace_id(),currentUser.getUid());
             Toast.makeText(this,"Vous avez choisi ce restaurant", Toast.LENGTH_SHORT).show();
             getUserFromFirebase();
         }

@@ -53,6 +53,8 @@ public class Results {
     @Expose
     private String vicinity;
 
+    private Boolean someoneEatHere;
+
     public Geometry getGeometry() {
         return geometry;
     }
@@ -171,5 +173,13 @@ public class Results {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
+    }
+
+    public Boolean getSomeoneEatHere() {
+        return someoneEatHere;
+    }
+
+    public void setSomeoneEatHere(Boolean someoneEatHere) {
+        this.someoneEatHere = someoneEatHere;
     }
 }

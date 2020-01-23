@@ -53,6 +53,10 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     public ImageView mPictureRestaurant;
     @BindView(R.id.item_opening_restaurant)
     public TextView mOpeningRestaurant;
+    @BindView(R.id.number_of_people_linear_layout)
+    public LinearLayout mPeopleLinearLayout;
+    @BindView(R.id.number_of_people_text_view)
+    public TextView mNumberOfPeople;
 
     public PlacesViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -62,6 +66,20 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void updateWithPlaces(Result place){
+
+        UserHelper.getAllUserForRestaurant(place.getName())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.getResult().isEmpty()){
+                            Log.e("TAG", "Size of result : "+task.getResult().size());
+                            mPeopleLinearLayout.setVisibility(View.VISIBLE);
+                            mNumberOfPeople.setText("("+task.getResult().size()+")");
+                        }else{
+                        }
+                    }
+                });
 
         Log.e("TAG", "Photos : " + place.getPhotos());
         if (place.getPhotos() != null){

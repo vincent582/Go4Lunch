@@ -4,6 +4,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.NavArgument;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -32,7 +35,7 @@ import com.pdv.go4lunch.utils.Permission;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity{
 
     //For Navigation
     private NavController mNavController;
@@ -46,7 +49,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        current_user = getCurrentUser();
+        current_user = ((Go4LunchApplication) getApplication()).getCurrentUser();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -141,6 +144,7 @@ public class MainActivity extends BaseActivity {
         bundle.putParcelable("LOCATION", location);
         mNavController.setGraph(R.navigation.nav_graph, bundle);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

@@ -6,6 +6,7 @@ public class User {
     private String userName;
     private String urlPicture;
     private String restaurant;
+    private String restaurantId;
 
     public User (){}
 
@@ -13,7 +14,6 @@ public class User {
         this.Uid = Uid;
         this.userName = userName;
         this.urlPicture = urlPicture;
-
     }
 
     public String getId() {
@@ -46,5 +46,13 @@ public class User {
 
     public void setRestaurant(String restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
     }
 }

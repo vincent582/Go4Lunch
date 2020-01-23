@@ -40,8 +40,6 @@ public class PlacesRepository {
                 GooglePlaces googlePlaces = response.body();
                 if (googlePlaces != null || googlePlaces.getResults() != null){
                     nearestPlaces.setValue(googlePlaces.getResults());
-
-
                 }
             }
             @Override

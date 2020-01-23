@@ -24,10 +24,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected FusedLocationProviderClient mFusedLocationProviderClient;
 
-    @Nullable
-    public FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser();}
-
-    public Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
 
     public OnFailureListener onFailureListener(){
         return new OnFailureListener() {
