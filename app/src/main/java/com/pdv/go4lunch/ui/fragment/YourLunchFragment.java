@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -111,6 +112,7 @@ public class YourLunchFragment extends Fragment {
                 public void onClick(View v) {
                     UserHelper.deleteRestaurantFromUser(currentUser.getUid());
                     mLinearLayoutYourLunch.setVisibility(View.GONE);
+                    Toast.makeText(getContext(),"Lunch Canceled",Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(getParentFragment()).navigate(R.id.yourLunchFragment);
                 }
             });

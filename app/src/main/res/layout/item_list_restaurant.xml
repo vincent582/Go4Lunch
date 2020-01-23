@@ -115,9 +115,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
+                android:isIndicator="true"
                 android:numStars="3"
                 android:progressTint="@color/quantum_yellowA700"
-                android:rating="1" />
+                android:rating="1"
+                android:stepSize="1" />
         </FrameLayout>
 
     </LinearLayout>

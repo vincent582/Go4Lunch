@@ -60,14 +60,16 @@
 
         <RatingBar
             android:id="@+id/ratingBar2"
-            style="@android:style/Widget.Holo.Light.RatingBar"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="false"
+            android:isIndicator="true"
             android:numStars="3"
             android:progressTint="#FFB300"
             android:rating="2"
+            android:stepSize="1"
             android:visibility="visible" />
 
         <Button
