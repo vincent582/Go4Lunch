@@ -119,9 +119,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     private void configureSignInFacebook() {
         List<String> permission = Arrays.asList("user_photos", "email", "user_birthday", "public_profile");
         mCallbackManager = CallbackManager.Factory.create();
-        LoginManager loginManager = LoginManager.getInstance();
-        loginManager.logInWithReadPermissions(this, permission);
-        loginManager.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().logInWithReadPermissions(this, permission);
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -140,10 +139,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //Facebook signIn callback
-        mCallbackManager.onActivityResult(requestCode,resultCode,data);
-        //Google signIn result
         if (requestCode == RC_SIGN_IN){
+            //Google signIn result
             if (resultCode == RESULT_OK) {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 try {
@@ -156,6 +153,11 @@ public class AuthenticationActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.authentication_layout), "An error occurred Authentication canceled!", LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
+        }
+
+        if(mCallbackManager != null){
+            //Facebook signIn callback
+            mCallbackManager.onActivityResult(requestCode,resultCode,data);
         }
     }
 
