@@ -25,10 +25,14 @@ import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.MainActivity;
+import com.pdv.go4lunch.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
+import static com.pdv.go4lunch.utils.Utils.isCurrentUserLogged;
 
 
 public class LogoutFragment extends Fragment {
@@ -42,7 +46,6 @@ public class LogoutFragment extends Fragment {
 
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
-    private FirebaseUser currentUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,25 +53,23 @@ public class LogoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
         ButterKnife.bind(this,view);
 
-        currentUser = ((Go4LunchApplication)getActivity().getApplication()).getCurrentUser();
-
         updateUI();
         return view;
     }
 
     private void updateUI() {
-        if (currentUser != null){
+        if (Utils.isCurrentUserLogged() != null){
             //Get picture URL from Firebase
-            if (currentUser.getPhotoUrl() != null) {
+            if (getCurrentUser().getPhotoUrl() != null) {
                 Glide.with(this)
-                        .load(currentUser.getPhotoUrl())
+                        .load(getCurrentUser().getPhotoUrl())
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPictureUser);
             }
 
             //Get email & username
-            String email = TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
-            String name = TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
+            String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
+            String name = TextUtils.isEmpty(getCurrentUser().getDisplayName()) ? getString(R.string.info_no_username_found) : getCurrentUser().getDisplayName();
 
             //Update views with data
             this.mEmailUser.setText(email);
@@ -105,11 +106,11 @@ public class LogoutFragment extends Fragment {
     }
 
     private void deleteUserFromFirebase(){
-        if (currentUser != null) {
+        if (isCurrentUserLogged() != null) {
+            UserHelper.deleteUser(getCurrentUser().getUid());
             AuthUI.getInstance()
                     .delete(getContext())
                     .addOnSuccessListener(this.updateUIAfterRESTRequestsCompleted(DELETE_USER_TASK));
-            UserHelper.deleteUser(currentUser.getUid());
         }
     }
 

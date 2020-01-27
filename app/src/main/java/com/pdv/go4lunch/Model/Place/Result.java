@@ -22,9 +22,6 @@ public class Result implements Serializable {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("rating")
-    @Expose
-    private Double rating;
     @SerializedName("types")
     @Expose
     private List<String> types = null;
@@ -87,14 +84,6 @@ public class Result implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
     }
 
     public List<String> getTypes() {

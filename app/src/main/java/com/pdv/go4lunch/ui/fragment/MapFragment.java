@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,7 +43,6 @@ import java.util.List;
 
 import static com.pdv.go4lunch.ui.activities.DetailsActivity.INTENT_PLACE;
 
-
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -51,18 +51,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private PlacesViewModel mPlacesViewModel;
     private Location myLocation;
-    private MarkerOptions markerOptions = new MarkerOptions();
+    private List<Results> mPlaces;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
+        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+
         if (getArguments() != null){
             myLocation = getArguments().getParcelable("LOCATION");
             Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
+            mPlacesViewModel.init(myLocation);
         }
-        mPlacesViewModel = new PlacesViewModel();
 
         initMap();
         return view;
@@ -73,6 +75,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onResume();
         myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
         Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
+        if (myLocation != null){
+            mPlacesViewModel.init(myLocation);
+        }
     }
 
     private void initMap() {
@@ -100,7 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(myLocation.getLatitude(),
                                 myLocation.getLongitude()), DEFAULT_ZOOM));
-                placeMarkerOnMap();
+                getNearestPlaces();
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -111,62 +116,58 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void placeMarkerOnMap() {
-        mPlacesViewModel.getNearestPlaces(myLocation).observe(this, new Observer<List<Results>>() {
-            @Override
-            public void onChanged(List<Results> results) {
-                try {
-                    mMap.clear();
-                    // This loop will go through all the results and add marker on each location.
-                    for (int i = 0; i <= results.size(); i++) {
-                        Double lat = results.get(i).getGeometry().getLocation().getLat();
-                        Double lng = results.get(i).getGeometry().getLocation().getLng();
-
-                        LatLng latLng = new LatLng(lat, lng);
-                        markerOptions.position(latLng);
-
-                        UserHelper.getAllUserForRestaurant(results.get(i).getName())
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (!task.getResult().isEmpty()){
-                                    for (QueryDocumentSnapshot snapshot : task.getResult()){
-                                        Log.e("TAG", "onComplete: "+snapshot.toObject(User.class).getRestaurant());
-                                    }
-                                    markerOptions.icon((BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red)));
-                                }else{
-                                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
-                                }
-                            }
-                        });
-
-                        Marker m = mMap.addMarker(markerOptions);
-                        m.setTag(results.get(i).getPlaceId());
-
-                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                            @Override
-                            public boolean onMarkerClick(Marker marker) {
-                                callApiPlaceToStartDetailsActivity(marker);
-                                return false;
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    Log.d("onResponse", "There is an error");
-                    e.printStackTrace();
-                }
-            }
-        });
+    private void getNearestPlaces() {
+            mPlacesViewModel.getNearestPlaces().observe(this, this::putMarkerOnMap);
     }
+
+    private void putMarkerOnMap(List<Results> results) {
+        mPlaces = results;
+        mMap.clear();
+        for (Results place: mPlaces) {
+            Double lat = place.getGeometry().getLocation().getLat();
+            Double lng = place.getGeometry().getLocation().getLng();
+            MarkerOptions markerOptions = new MarkerOptions();
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+
+            UserHelper.getAllUserForRestaurant(place.getName())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.getResult().isEmpty()){
+                                for (QueryDocumentSnapshot snapshot : task.getResult()){
+                                    Log.e("TAG", "onComplete: "+snapshot.toObject(User.class).getRestaurant());
+                                }
+                                markerOptions.icon((BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red)));
+                            }else{
+                                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
+                            }
+                        }
+                    });
+
+            Marker m = mMap.addMarker(markerOptions);
+            m.setTag(place.getPlaceId());
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    callApiPlaceToStartDetailsActivity(marker);
+                    return false;
+                }
+            });
+        }
+    }
+
 
     private void callApiPlaceToStartDetailsActivity(Marker marker) {
         String placeId = marker.getTag().toString();
-        mPlacesViewModel.getPlace(placeId).observe(this, new Observer<List<Result>>() {
+
+        mPlacesViewModel.getPlace(placeId).observe(this, new Observer<Result>() {
             @Override
-            public void onChanged(List<Result> results) {
-                Intent intent = new Intent(getContext(),DetailsActivity.class);
-                intent.putExtra(INTENT_PLACE, results.get(0));
+            public void onChanged(Result result) {
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                intent.putExtra(INTENT_PLACE, result);
                 getContext().startActivity(intent);
             }
         });

@@ -67,21 +67,21 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void updateWithPlaces(Result place){
 
+        Log.e("TAG", "Place Name : "+ place.getName());
+
         UserHelper.getAllUserForRestaurant(place.getName())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (!task.getResult().isEmpty()){
-                            Log.e("TAG", "Size of result : "+task.getResult().size());
+                            Log.e("TAG", "Number Of people eating here : "+task.getResult().size());
                             mPeopleLinearLayout.setVisibility(View.VISIBLE);
                             mNumberOfPeople.setText("("+task.getResult().size()+")");
-                        }else{
                         }
                     }
                 });
 
-        Log.e("TAG", "Photos : " + place.getPhotos());
         if (place.getPhotos() != null){
             String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+place.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
             Log.e("TAG", "URL : " + url);

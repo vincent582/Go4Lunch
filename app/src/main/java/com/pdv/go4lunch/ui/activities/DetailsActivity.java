@@ -32,10 +32,14 @@ import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
+import com.pdv.go4lunch.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
+import static com.pdv.go4lunch.utils.Utils.isCurrentUserLogged;
 
 public class DetailsActivity extends BaseActivity {
 
@@ -61,15 +65,12 @@ public class DetailsActivity extends BaseActivity {
     public static String INTENT_PLACE = "INTENT_PLACE";
     private Result place;
     private User mUser;
-    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-
-        currentUser = ((Go4LunchApplication) getApplication()).getCurrentUser();
 
         if(getIntent().hasExtra(INTENT_PLACE)){
             place = (Result) getIntent().getSerializableExtra(INTENT_PLACE);
@@ -92,8 +93,8 @@ public class DetailsActivity extends BaseActivity {
     }
 
     private void getUserFromFirebase() {
-        if (currentUser != null){
-            Task<DocumentSnapshot> user = UserHelper.getUser(currentUser.getUid());
+        if (isCurrentUserLogged() != null){
+            Task<DocumentSnapshot> user = UserHelper.getUser(getCurrentUser().getUid());
             user.addOnSuccessListener(this, new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -220,8 +221,8 @@ public class DetailsActivity extends BaseActivity {
             Toast.makeText(this,"Vous avez déjà choisi ce restaurant", Toast.LENGTH_SHORT).show();
         }
         else {
-            UserHelper.updateUserRestaurant(place.getName(),currentUser.getUid());
-            UserHelper.updateUserRestaurantId(place.getPlace_id(),currentUser.getUid());
+            UserHelper.updateUserRestaurant(place.getName(), getCurrentUser().getUid());
+            UserHelper.updateUserRestaurantId(place.getPlace_id(), getCurrentUser().getUid());
             Toast.makeText(this,"Vous avez choisi ce restaurant", Toast.LENGTH_SHORT).show();
             getUserFromFirebase();
         }

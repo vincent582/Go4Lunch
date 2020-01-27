@@ -14,16 +14,24 @@ import java.util.List;
 public class PlacesViewModel extends ViewModel {
 
     private PlacesRepository mPlacesRepository;
+    private MutableLiveData<List<Results>> nearestPlaces;
 
     public PlacesViewModel() {
-        mPlacesRepository = new PlacesRepository();
+        mPlacesRepository = PlacesRepository.getInstance();
     }
 
-    public MutableLiveData<List<Results>> getNearestPlaces(Location myLocation){
-        return mPlacesRepository.getNearestPlaces(myLocation);
+    public void init(Location myLocation){
+        if (nearestPlaces != null) {
+            return;
+        }
+        nearestPlaces = mPlacesRepository.getNearestPlaces(myLocation);
     }
 
-    public MutableLiveData<List<Result>> getPlace(String id){
+    public MutableLiveData<List<Results>> getNearestPlaces(){
+        return nearestPlaces;
+    }
+
+    public MutableLiveData<Result> getPlace(String id){
         return mPlacesRepository.getPlace(id);
     }
 }

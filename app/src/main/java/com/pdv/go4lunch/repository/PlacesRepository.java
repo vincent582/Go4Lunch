@@ -26,12 +26,24 @@ public class PlacesRepository {
     private String type = "restaurant";
     private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
 
-    private GoogleApiService mGoogleApiService = RetrofitInstance.getGoogleService();
-    private MutableLiveData<List<Results>> nearestPlaces = new MutableLiveData<>();
-    private MutableLiveData<List<Result>> mMutableLiveDataPlaces = new MutableLiveData<>();
-    private ArrayList<Result> mPlace = new ArrayList<>();
+    private static PlacesRepository mPlacesRepository;
+    private GoogleApiService mGoogleApiService;
+
+    public static PlacesRepository getInstance(){
+        if (mPlacesRepository == null){
+            mPlacesRepository = new PlacesRepository();
+        }
+        return mPlacesRepository;
+    }
+
+    public PlacesRepository() {
+        mGoogleApiService = RetrofitInstance.getGoogleService();
+    }
+
 
     public MutableLiveData<List<Results>> getNearestPlaces(Location location) {
+        MutableLiveData<List<Results>> nearestPlaces = new MutableLiveData<>();
+
         String locationToString = location.getLatitude()+","+location.getLongitude();
         Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,radius,type,key);
         call.enqueue(new Callback<GooglePlaces>() {
@@ -40,30 +52,34 @@ public class PlacesRepository {
                 GooglePlaces googlePlaces = response.body();
                 if (googlePlaces != null || googlePlaces.getResults() != null){
                     nearestPlaces.setValue(googlePlaces.getResults());
+                    Log.e("TAG", "getAllPlaces: "+ nearestPlaces);
                 }
             }
             @Override
             public void onFailure(Call<GooglePlaces> call, Throwable t) {
+                nearestPlaces.setValue(null);
             }
         });
         return nearestPlaces;
     }
 
-    public MutableLiveData<List<Result>> getPlace(String id){
+
+    public MutableLiveData<Result> getPlace(String id){
+        MutableLiveData<Result> mPlaceDetails = new MutableLiveData<>();
+
         Call<Place> call = mGoogleApiService.getPlace(id,key);
         call.enqueue(new Callback<Place>() {
             @Override
             public void onResponse(Call<Place> call, Response<Place> response) {
-                Place place = response.body();
+                Result place = response.body().getResult();
                 if (place != null){
-                    mPlace.add(response.body().getResult());
-                    mMutableLiveDataPlaces.setValue(mPlace);
+                    mPlaceDetails.setValue(place);
                 }
             }
             @Override
             public void onFailure(Call<Place> call, Throwable t) {
             }
         });
-        return mMutableLiveDataPlaces;
+        return mPlaceDetails;
     }
 }

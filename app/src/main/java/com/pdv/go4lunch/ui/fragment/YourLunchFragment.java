@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Parcelable;
@@ -29,6 +30,7 @@ import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
+import com.pdv.go4lunch.utils.Utils;
 
 import java.util.List;
 
@@ -55,15 +57,13 @@ public class YourLunchFragment extends Fragment {
     @BindView(R.id.your_lunch_cancel_btn)
     Button mCancelBtn;
 
-    private FirebaseUser currentUser;
     private PlacesViewModel mPlacesViewModel;
-    private Result place;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentUser = ((Go4LunchApplication)getActivity().getApplication()).getCurrentUser();
-        mPlacesViewModel = new PlacesViewModel();
+
+        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class YourLunchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_your_lunch, container, false);
         ButterKnife.bind(this,view);
 
-        UserHelper.getUser(currentUser.getUid()).addOnSuccessListener(getActivity(), new OnSuccessListener<DocumentSnapshot>() {
+        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnSuccessListener(getActivity(), new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User user = documentSnapshot.toObject(User.class);
@@ -88,10 +88,9 @@ public class YourLunchFragment extends Fragment {
         mPlacesViewModel.getPlace(user.getRestaurantId()).observe(this,this::getDetails);
     }
 
-    private void getDetails(List<Result> results) {
-        Log.e("TAG", "place return : " + results);
-        place = results.get(0);
-        updateView(place);
+    private void getDetails(Result result) {
+        Log.e("TAG", "place return : " + result);
+        updateView(result);
     }
 
     private void updateView(Result place) {
@@ -110,7 +109,7 @@ public class YourLunchFragment extends Fragment {
             mCancelBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UserHelper.deleteRestaurantFromUser(currentUser.getUid());
+                    UserHelper.deleteRestaurantFromUser(Utils.getCurrentUser().getUid());
                     mLinearLayoutYourLunch.setVisibility(View.GONE);
                     Toast.makeText(getContext(),"Lunch Canceled",Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(getParentFragment()).navigate(R.id.yourLunchFragment);

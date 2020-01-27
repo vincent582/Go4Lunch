@@ -31,9 +31,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Permission;
+import com.pdv.go4lunch.utils.Utils;
 
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
+import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
+import static com.pdv.go4lunch.utils.Utils.isCurrentUserLogged;
 
 public class MainActivity extends BaseActivity{
 
@@ -41,15 +44,10 @@ public class MainActivity extends BaseActivity{
     private NavController mNavController;
     private AppBarConfiguration appBarConfiguration;
 
-    //For UI
-    private FirebaseUser current_user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        current_user = ((Go4LunchApplication) getApplication()).getCurrentUser();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -81,17 +79,17 @@ public class MainActivity extends BaseActivity{
         TextView mail = headerNavigation.findViewById(R.id.mail_user_drawer);
 
         //Then if user is authenticated with Firebase, display information.
-        if (current_user != null) {
+        if (isCurrentUserLogged() != null) {
             //Get picture URL from Firebase
-            if (current_user.getPhotoUrl() != null) {
+            if (getCurrentUser().getPhotoUrl() != null) {
                 Glide.with(this)
-                        .load(current_user.getPhotoUrl())
+                        .load(getCurrentUser().getPhotoUrl())
                         .circleCrop()
                         .into(user_image);
             }
             //Get email & username from Firebase
-            String email = TextUtils.isEmpty(current_user.getEmail()) ? getString(R.string.info_no_email_found) : current_user.getEmail();
-            String username = TextUtils.isEmpty(current_user.getDisplayName()) ? getString(R.string.info_no_username_found) : current_user.getDisplayName();
+            String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
+            String username = TextUtils.isEmpty(getCurrentUser().getDisplayName()) ? getString(R.string.info_no_username_found) : getCurrentUser().getDisplayName();
             //Update views with data
             name.setText(username);
             mail.setText(email);

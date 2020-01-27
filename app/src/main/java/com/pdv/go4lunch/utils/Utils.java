@@ -3,6 +3,10 @@ package com.pdv.go4lunch.utils;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.Place.Result;
 
 import java.text.ParseException;
@@ -14,6 +18,11 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class Utils {
+
+    @Nullable
+    public static FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser();}
+
+    public static Boolean isCurrentUserLogged(){ return (getCurrentUser() != null); }
 
     public static int getDistanceBetweenLocation(Location location1, Result place){
         Location location = new Location("Location");
@@ -50,7 +59,6 @@ public abstract class Utils {
             else{
                 result = result +"pm";
             }
-            Log.e("TAG", "updateWithPlaces: " + result);
             return result;
         } catch (ParseException e) {
             e.printStackTrace();

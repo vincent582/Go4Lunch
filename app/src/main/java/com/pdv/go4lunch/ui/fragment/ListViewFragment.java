@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,8 @@ import com.pdv.go4lunch.ui.viewHolder.PlacesRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
 import com.pdv.go4lunch.utils.Utils;
 
+import java.security.Provider;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -35,20 +39,22 @@ public class ListViewFragment extends Fragment {
     RecyclerView mRecyclerView;
 
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
-    private PlacesViewModel mPlacesViewModel = new PlacesViewModel();
+    private PlacesViewModel mPlacesViewModel;
 
     private Location myLocation;
-
-    private List<Result> mResults;
+    private List<Result> mResults = new ArrayList<>();
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+
         if (Permission.checkIfLocationPermissionGranted(getContext())){
             myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
             Log.i("TAG", "Get location in ListView : "+ myLocation);
+            mPlacesViewModel.init(myLocation);
         }
     }
 
@@ -62,25 +68,23 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        mPlacesViewModel.getNearestPlaces(myLocation).observe(this, this::getAllPlaces);
+        mPlacesViewModel.getNearestPlaces().observe(this, this::getAllPlaces);
         return view;
     }
 
     private void getAllPlaces(List<Results> results) {
         for (Results result: results) {
-            Log.e("TAG", "getAllPlaces: "+result.getName()+" , " +result.getPlaceId());
             mPlacesViewModel.getPlace(result.getPlaceId()).observe(this,this::getPlaceByIds);
         }
     }
 
-    private void getPlaceByIds(List<Result> result) {
-        for (Result place : result) {
-            place.setDistance(Utils.getDistanceBetweenLocation(myLocation,place));
-        }
-        mResults = result;
+    private void getPlaceByIds(Result result) {
+        result.setDistance(Utils.getDistanceBetweenLocation(myLocation,result));
+        mResults.add(result);
         Utils.sortByDistance(mResults);
         updateUi();
     }
+
 
     private void updateUi(){
         adapter.updatedPlaces(mResults);
