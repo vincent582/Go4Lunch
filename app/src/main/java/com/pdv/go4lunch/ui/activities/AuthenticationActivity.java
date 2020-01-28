@@ -217,5 +217,4 @@ public class AuthenticationActivity extends BaseActivity {
             ).addOnFailureListener(this.mOnFailureListener());
         }
     }
-
 }

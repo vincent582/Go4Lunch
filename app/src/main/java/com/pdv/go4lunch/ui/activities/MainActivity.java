@@ -47,6 +47,8 @@ public class MainActivity extends BaseActivity {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
+        mNavController.setGraph(R.navigation.nav_graph);
+
         configureNavigationDrawer();
         configureToolbar();
         configureLayoutDrawer();
@@ -142,25 +144,13 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Location location) {
                     ((Go4LunchApplication) getApplication()).setMyLocation(location);
-                    setUpNavigationHostFragmentWithLocation(location);
+                    mNavController.setGraph(R.navigation.nav_graph);
                 }
             });
         } else {
             Permission.requestLocationPermissions(this);
         }
     }
-
-    /**
-     * Pass a bundle to the host fragment
-     * to have access to this location on start navGraph.
-     * @param location
-     */
-    private void setUpNavigationHostFragmentWithLocation(Location location) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("LOCATION", location);
-        mNavController.setGraph(R.navigation.nav_graph, bundle);
-    }
-
 
     /**
      * Result of request Permissions
@@ -174,9 +164,9 @@ public class MainActivity extends BaseActivity {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 getLocation();
-                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Location Permission Granted",Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this,"Permission Denied",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Location Permission Denied",Toast.LENGTH_LONG).show();
             }
         }
         else if (requestCode == PERMISSIONS_REQUEST_CALL_PHONE){

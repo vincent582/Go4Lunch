@@ -1,8 +1,5 @@
 package com.pdv.go4lunch.ui.fragment;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,76 +7,44 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Go4LunchApplication;
-import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
-import com.pdv.go4lunch.Model.Place.Result;
-import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
-import com.pdv.go4lunch.ui.activities.DetailsActivity;
-
-import java.util.List;
-
-import static com.pdv.go4lunch.ui.activities.DetailsActivity.INTENT_PLACE;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng mDefaultLocation = new LatLng(10,10);
-    private int DEFAULT_ZOOM = 18;
-
-    private PlacesViewModel mPlacesViewModel;
     private Location myLocation;
-    private List<Results> mPlaces;
+    private int DEFAULT_ZOOM = 18;
+    private LatLng mDefaultLocation = new LatLng(10,10);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-
-        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-
-        if (getArguments() != null){
-            myLocation = getArguments().getParcelable("LOCATION");
-            Log.e("TAG", "getLocation on Map Fragment from bundle: "+ getArguments().getParcelable("LOCATION"));
-            mPlacesViewModel.init(myLocation);
-        }
-
         initMap();
         return view;
     }
 
+    /**
+     * onResume get myLocation from application
+     */
     @Override
     public void onResume() {
         super.onResume();
         myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-        Log.e("TAG", "getLocation on Map Fragment: "+ myLocation);
-        if (myLocation != null){
-            mPlacesViewModel.init(myLocation);
-        }
     }
 
+    /**
+     * get mapFragment.
+     */
     private void initMap() {
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
@@ -88,12 +53,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
     }
 
+    /**
+     * On map ready update location
+     * @param googleMap
+     */
     @Override
-    public void onMapReady(GoogleMap map) {
-        mMap = map;
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
         updateLocationUI();
     }
 
+    /**
+     * if location != null showing myLocation on map
+     * else showing default position map.
+     */
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -105,7 +78,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(myLocation.getLatitude(),
                                 myLocation.getLongitude()), DEFAULT_ZOOM));
-                getNearestPlaces();
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -115,6 +87,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    private PlacesViewModel mPlacesViewModel;
+    private List<Results> mPlaces;
 
     private void getNearestPlaces() {
             mPlacesViewModel.getNearestPlaces().observe(this, this::putMarkerOnMap);
@@ -172,4 +166,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+     */
 }
