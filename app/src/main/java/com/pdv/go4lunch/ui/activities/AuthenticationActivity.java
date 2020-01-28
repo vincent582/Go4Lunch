@@ -30,6 +30,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.R;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import butterknife.OnClick;
 
 import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
-public class AuthenticationActivity extends AppCompatActivity {
+public class AuthenticationActivity extends BaseActivity {
 
     //FOR DESIGN
     @BindView(R.id.progress_bar_auth)
@@ -172,8 +173,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //TODO put current user in database firestore
-                            //FirebaseUser user = mAuth.getCurrentUser();
+                            createUserInFirestore();
                             startMainActivity();
                         } else {
                             Snackbar.make(findViewById(R.id.authentication_layout), "Authentication Failed !", LENGTH_SHORT).show();
@@ -194,7 +194,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            //TODO put current user in database firestore
+                            createUserInFirestore();
                             startMainActivity();
                         } else {
                             Log.w("TAG", "signInWithCredential: failure "+task.getException());
@@ -203,4 +203,19 @@ public class AuthenticationActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    /**
+     * Create the user loged in Firestore
+     */
+    private void createUserInFirestore(){
+        if (mAuth.getCurrentUser() != null){
+            UserHelper.createUser(
+                    mAuth.getCurrentUser().getUid(),
+                    mAuth.getCurrentUser().getDisplayName(),
+                    mAuth.getCurrentUser().getPhotoUrl().toString()
+            ).addOnFailureListener(this.mOnFailureListener());
+        }
+    }
+
 }

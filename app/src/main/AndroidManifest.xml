@@ -23,10 +23,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU" />
 
-        <activity android:name=".ui.activities.MainActivity"></activity>
+        <activity android:name=".ui.activities.MainActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity android:name=".ui.activities.DetailsActivity" />
         <activity
             android:name=".ui.activities.AuthenticationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
