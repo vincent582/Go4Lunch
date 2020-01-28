@@ -29,13 +29,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph"
-
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_drawer"
-            />
+            app:layout_constraintTop_toBottomOf="@id/toolbar_drawer" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_bar"
@@ -58,5 +55,15 @@
         android:fitsSystemWindows="true"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
-        app:menu="@menu/menu_drawer"></com.google.android.material.navigation.NavigationView>
+        app:menu="@menu/menu_drawer">
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="bottom|center"
+            android:contentDescription="logo of the application"
+            android:tint="@android:color/white"
+            app:srcCompat="@drawable/ic_logo_auth" />
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -4,45 +4,40 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavArgument;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Permission;
-import com.pdv.go4lunch.utils.Utils;
 
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
 import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
 import static com.pdv.go4lunch.utils.Utils.isCurrentUserLogged;
 
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity {
 
     //For Navigation
     private NavController mNavController;
     private AppBarConfiguration appBarConfiguration;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,25 +47,27 @@ public class MainActivity extends BaseActivity{
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        getLocation();
-
         configureNavigationDrawer();
         configureToolbar();
         configureLayoutDrawer();
         configureBottomNavigationView();
+
+        getLocation();
     }
 
-
-    /**************************************************************
-     * Configure Navigation Layout && UI component
-     ***************************************************************/
-
+    /**
+     * Setup NavigationUi with navigationView to the navController.
+     */
     public void configureNavigationDrawer() {
         NavigationView navView = findViewById(R.id.navigation_drawer);
         NavigationUI.setupWithNavController(navView, mNavController);
         updateNavigationDrawerUi(navView);
     }
 
+    /**
+     * Update NavigationView design with currentUser information
+     * @param navView
+     */
     private void updateNavigationDrawerUi(NavigationView navView) {
         //Get navigation drawer header and UI component.
         View headerNavigation = navView.inflateHeaderView(R.layout.header_nav);
@@ -96,11 +93,18 @@ public class MainActivity extends BaseActivity{
         }
     }
 
+    /**
+     * Setup NavigationUi with bottomNavigationView to the navController.
+     */
     private void configureBottomNavigationView() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_bar);
         NavigationUI.setupWithNavController(bottomNav, mNavController);
     }
 
+    /**
+     * Setup drawerLayout and appBarConfiguration
+     * then setup NavigationUI to navController
+     */
     private void configureLayoutDrawer() {
         DrawerLayout mDrawerLayout = findViewById(R.id.activity_main_layout_drawer);
         //Configure appBar to have hamburger icon on fragments
@@ -112,17 +116,26 @@ public class MainActivity extends BaseActivity{
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration);
     }
 
+    /**
+     * Configure toolbar
+     */
     private void configureToolbar() {
         Toolbar mToolbar = findViewById(R.id.toolbar_drawer);
         setSupportActionBar(mToolbar);
     }
 
-    //Handles the Up button by delegating its behavior to the given NavController.
+    /**
+     * Handles the Up button by delegating its behavior to the given NavController.
+     */
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(mNavController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
+    /**
+     * get Location of the user if permission granted and save in application
+     * else ask request permission.
+     */
     private void getLocation() {
         if (Permission.checkIfLocationPermissionGranted(this)) {
             mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -137,6 +150,11 @@ public class MainActivity extends BaseActivity{
         }
     }
 
+    /**
+     * Pass a bundle to the host fragment
+     * to have access to this location on start navGraph.
+     * @param location
+     */
     private void setUpNavigationHostFragmentWithLocation(Location location) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("LOCATION", location);
@@ -144,6 +162,12 @@ public class MainActivity extends BaseActivity{
     }
 
 
+    /**
+     * Result of request Permissions
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
