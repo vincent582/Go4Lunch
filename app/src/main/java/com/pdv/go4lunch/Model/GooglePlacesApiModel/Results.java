@@ -1,12 +1,15 @@
 package com.pdv.go4lunch.Model.GooglePlacesApiModel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.pdv.go4lunch.Model.Place.Photo;
 
 import java.util.List;
 
-public class Results {
+public class Results implements Parcelable {
     @SerializedName("geometry")
     @Expose
     private Geometry geometry;
@@ -54,6 +57,47 @@ public class Results {
     private String vicinity;
 
     private Boolean someoneEatHere;
+
+    protected Results(Parcel in) {
+        icon = in.readString();
+        id = in.readString();
+        name = in.readString();
+        placeId = in.readString();
+        if (in.readByte() == 0) {
+            priceLevel = null;
+        } else {
+            priceLevel = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            rating = null;
+        } else {
+            rating = in.readDouble();
+        }
+        reference = in.readString();
+        scope = in.readString();
+        types = in.createStringArrayList();
+        if (in.readByte() == 0) {
+            userRatingsTotal = null;
+        } else {
+            userRatingsTotal = in.readInt();
+        }
+        vicinity = in.readString();
+        byte tmpSomeoneEatHere = in.readByte();
+        someoneEatHere = tmpSomeoneEatHere == 0 ? null : tmpSomeoneEatHere == 1;
+        distance = in.readInt();
+    }
+
+    public static final Creator<Results> CREATOR = new Creator<Results>() {
+        @Override
+        public Results createFromParcel(Parcel in) {
+            return new Results(in);
+        }
+
+        @Override
+        public Results[] newArray(int size) {
+            return new Results[size];
+        }
+    };
 
     public Geometry getGeometry() {
         return geometry;
@@ -181,5 +225,52 @@ public class Results {
 
     public void setSomeoneEatHere(Boolean someoneEatHere) {
         this.someoneEatHere = someoneEatHere;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    private int distance;
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(icon);
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(placeId);
+        if (priceLevel == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(priceLevel);
+        }
+        if (rating == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(rating);
+        }
+        dest.writeString(reference);
+        dest.writeString(scope);
+        dest.writeStringList(types);
+        if (userRatingsTotal == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(userRatingsTotal);
+        }
+        dest.writeString(vicinity);
+        dest.writeByte((byte) (someoneEatHere == null ? 0 : someoneEatHere ? 1 : 2));
+        dest.writeInt(distance);
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

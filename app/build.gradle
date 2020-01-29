@@ -59,8 +59,8 @@ dependencies {
     //Google play services
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    //Google Places SDK
     implementation 'com.google.android.libraries.places:places:2.0.0'
-
 
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.google.android.material:material:1.0.0'
