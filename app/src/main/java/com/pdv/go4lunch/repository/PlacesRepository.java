@@ -12,7 +12,6 @@ import com.pdv.go4lunch.Model.Place.Place;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.utils.RetrofitInstance;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,14 +20,15 @@ import retrofit2.Response;
 
 public class PlacesRepository {
 
-    private String location = "48.8566,2.3522";
     private String radius = "500";
     private String type = "restaurant";
-    private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
+    private String key = "AIzaSyBgfIX1oNwIm-vqIQxVdA8iMWuY9oZ4etA";
 
+    //FOR DATA
     private static PlacesRepository mPlacesRepository;
     private GoogleApiService mGoogleApiService;
 
+    //REPOSITORY INSTANCE
     public static PlacesRepository getInstance(){
         if (mPlacesRepository == null){
             mPlacesRepository = new PlacesRepository();
@@ -36,15 +36,20 @@ public class PlacesRepository {
         return mPlacesRepository;
     }
 
+    //CONSTRUCTOR
     public PlacesRepository() {
         mGoogleApiService = RetrofitInstance.getGoogleService();
     }
 
-
-    public MutableLiveData<List<Results>> getNearestPlaces(Location location) {
+    /**
+     * Get nearest restaurant from Google Places API
+     * @param location
+     * @return
+     */
+    public MutableLiveData<List<Results>> getNearestRestaurants(Location location) {
         MutableLiveData<List<Results>> nearestPlaces = new MutableLiveData<>();
-
         String locationToString = location.getLatitude()+","+location.getLongitude();
+
         Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,radius,type,key);
         call.enqueue(new Callback<GooglePlaces>() {
             @Override
@@ -52,7 +57,7 @@ public class PlacesRepository {
                 GooglePlaces googlePlaces = response.body();
                 if (googlePlaces != null || googlePlaces.getResults() != null){
                     nearestPlaces.setValue(googlePlaces.getResults());
-                    Log.e("TAG", "getAllPlaces: "+ nearestPlaces);
+                    Log.e("TAG", "getAllPlaces in the repository: "+ nearestPlaces);
                 }
             }
             @Override
@@ -63,10 +68,13 @@ public class PlacesRepository {
         return nearestPlaces;
     }
 
-
-    public MutableLiveData<Result> getPlace(String id){
+    /**
+     * Get the restaurant details from an ID in Google Places API.
+     * @param id
+     * @return
+     */
+    public MutableLiveData<Result> getRestaurantDetails(String id){
         MutableLiveData<Result> mPlaceDetails = new MutableLiveData<>();
-
         Call<Place> call = mGoogleApiService.getPlace(id,key);
         call.enqueue(new Callback<Place>() {
             @Override

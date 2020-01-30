@@ -204,7 +204,6 @@ public class AuthenticationActivity extends BaseActivity {
                 });
     }
 
-
     /**
      * Create the user loged in Firestore
      */

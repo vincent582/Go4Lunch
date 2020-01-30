@@ -1,15 +1,11 @@
 package com.pdv.go4lunch.ui.fragment;
 
-
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +18,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.pdv.go4lunch.API.UserHelper;
-import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.utils.Utils;
 
 import java.util.List;
@@ -37,11 +30,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.pdv.go4lunch.ui.activities.MainActivity.BUNDLE_PLACES;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class YourLunchFragment extends Fragment {
 
+    //FOR UI
     @BindView(R.id.your_lunch_details_ll)
     LinearLayout mLinearLayoutYourLunch;
     @BindView(R.id.your_lunch_details_empty_ll)
@@ -57,13 +53,22 @@ public class YourLunchFragment extends Fragment {
     @BindView(R.id.your_lunch_cancel_btn)
     Button mCancelBtn;
 
-    private PlacesViewModel mPlacesViewModel;
+    //FOR DATA
+    private List<Result> mRestaurants;
 
+    /**
+     * Get Arguments
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+        if (getArguments() != null)
+        {
+            mRestaurants = getArguments().getParcelableArrayList(BUNDLE_PLACES);
+            Log.e("TAG", "onCreateView listViewFragment fragment: " + getArguments().getParcelableArrayList("PLACES"));
+        }
     }
 
     @Override
@@ -71,7 +76,15 @@ public class YourLunchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_your_lunch, container, false);
         ButterKnife.bind(this,view);
+        getCurrentUserWithAllData();
+        return view;
+    }
 
+    /**
+     * Get current user from firebase with all information
+     * Create custom User model
+     */
+    private void getCurrentUserWithAllData() {
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnSuccessListener(getActivity(), new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -79,45 +92,46 @@ public class YourLunchFragment extends Fragment {
                 getPlace(user);
             }
         });
-
-        return view;
     }
 
+    /**
+     * Get user chosen restaurant in list
+     * @param user
+     */
     private void getPlace(User user) {
-        Log.e("TAG", "onSuccess: "+user.getRestaurantId());
-        mPlacesViewModel.getPlace(user.getRestaurantId()).observe(this,this::getDetails);
-    }
-
-    private void getDetails(Result result) {
-        Log.e("TAG", "place return : " + result);
-        updateView(result);
-    }
-
-    private void updateView(Result place) {
-        if (place != null) {
-            if (place.getPhotos() != null) {
-                String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + place.getPhotos().get(0).getPhotoReference() + "&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
-                Glide.with(mPictureRestaurant.getContext())
-                        .load(url)
-                        .centerCrop()
-                        .into(mPictureRestaurant);
+        for (Result mRestaurant : mRestaurants){
+            if (user.getRestaurantId() == mRestaurant.getPlace_id()){
+                updateView(mRestaurant);
             }
-            mNameRestaurant.setText(place.getName());
-            mAdressRestaurant.setText(place.getVicinity());
-            mWebsiteRestaurant.setText(place.getWebsite());
-
-            mCancelBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    UserHelper.deleteRestaurantFromUser(Utils.getCurrentUser().getUid());
-                    mLinearLayoutYourLunch.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),"Lunch Canceled",Toast.LENGTH_SHORT).show();
-                    NavHostFragment.findNavController(getParentFragment()).navigate(R.id.yourLunchFragment);
-                }
-            });
-            mLinearLayoutYourLunch.setVisibility(View.VISIBLE);
-        }else{
-            mLinearLayoutYourLunchEmpty.setVisibility(View.VISIBLE);
         }
+        mLinearLayoutYourLunchEmpty.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Update fragment UI
+     * @param restaurant
+     */
+    private void updateView(Result restaurant) {
+        if (restaurant.getPhotos() != null) {
+            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + restaurant.getPhotos().get(0).getPhotoReference() + "&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
+            Glide.with(mPictureRestaurant.getContext())
+                    .load(url)
+                    .centerCrop()
+                    .into(mPictureRestaurant);
+        }
+        mNameRestaurant.setText(restaurant.getName());
+        mAdressRestaurant.setText(restaurant.getVicinity());
+        mWebsiteRestaurant.setText(restaurant.getWebsite());
+        mLinearLayoutYourLunch.setVisibility(View.VISIBLE);
+
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserHelper.deleteRestaurantFromUser(Utils.getCurrentUser().getUid());
+                Toast.makeText(getContext(), "Lunch Canceled", Toast.LENGTH_SHORT).show();
+                mLinearLayoutYourLunch.setVisibility(View.GONE);
+                mLinearLayoutYourLunchEmpty.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

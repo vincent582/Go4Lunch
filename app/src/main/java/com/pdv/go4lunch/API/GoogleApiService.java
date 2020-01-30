@@ -22,11 +22,5 @@ public interface GoogleApiService {
     Call<Place> getPlace(
             @Query("place_id") String id,
             @Query("key") String key);
-
-    @GET("maps/api/place/photo?maxwidth=400")
-    Call<ResponseBody> getPhoto(
-            @Query("photoreference") String photoreference,
-            @Query("key") String key);
-
 }
 

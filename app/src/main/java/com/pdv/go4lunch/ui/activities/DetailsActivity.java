@@ -1,6 +1,5 @@
 package com.pdv.go4lunch.ui.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,26 +22,22 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.pdv.go4lunch.API.UserHelper;
-import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
-import com.pdv.go4lunch.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
 import static com.pdv.go4lunch.utils.Utils.isCurrentUserLogged;
 
-public class DetailsActivity extends BaseActivity {
+public class DetailsActivity extends AppCompatActivity {
 
     @BindView(R.id.details_name)
     TextView mName;
@@ -62,7 +58,7 @@ public class DetailsActivity extends BaseActivity {
     @BindView(R.id.details_item_workmates_rv)
     RecyclerView mRecyclerView;
 
-    public static String INTENT_PLACE = "INTENT_PLACE";
+    public static String DETAILS_PLACES = "DETAILS_PLACES";
     private Result place;
     private User mUser;
 
@@ -72,8 +68,8 @@ public class DetailsActivity extends BaseActivity {
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        if(getIntent().hasExtra(INTENT_PLACE)){
-            place = (Result) getIntent().getSerializableExtra(INTENT_PLACE);
+        if(getIntent().hasExtra(DETAILS_PLACES)){
+            place = getIntent().getParcelableExtra(DETAILS_PLACES);
         }
 
         UserRecyclerViewAdapter adapter = new UserRecyclerViewAdapter(generateOptionForAdapter(UserHelper.getAllUserForRestaurant(place.getName())));
@@ -99,7 +95,6 @@ public class DetailsActivity extends BaseActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     mUser = documentSnapshot.toObject(User.class);
-                    setActionButtonImage();
                 }
             });
         }
@@ -205,16 +200,6 @@ public class DetailsActivity extends BaseActivity {
             Permission.requestCallingPermissions(this);
         }
     }
-
-
-    private void setActionButtonImage() {
-        if (mUser.getRestaurant() != null && mUser.getRestaurant().equals(place.getName())){
-            mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.fui_ic_check_circle_black_128dp));
-        }else{
-            mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_btn_24dp));
-        }
-    }
-
 
     private void updateRestaurantInFirebase() {
         if (mUser.getRestaurant() != null && mUser.getRestaurant().equals(place.getName())){

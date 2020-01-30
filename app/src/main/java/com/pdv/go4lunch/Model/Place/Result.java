@@ -1,14 +1,16 @@
 package com.pdv.go4lunch.Model.Place;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Geometry;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class Result implements Serializable {
+public class Result implements Parcelable {
 
     @SerializedName("place_id")
     @Expose
@@ -39,6 +41,29 @@ public class Result implements Serializable {
     private String website;
 
     private int distance;
+
+    protected Result(Parcel in) {
+        place_id = in.readString();
+        formattedPhoneNumber = in.readString();
+        icon = in.readString();
+        name = in.readString();
+        types = in.createStringArrayList();
+        vicinity = in.readString();
+        website = in.readString();
+        distance = in.readInt();
+    }
+
+    public static final Creator<Result> CREATOR = new Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
 
     public OpeningHours getOpeningHours() {
         return openingHours;
@@ -132,5 +157,22 @@ public class Result implements Serializable {
 
     public void setPlace_id(String place_id) {
         this.place_id = place_id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(place_id);
+        dest.writeString(formattedPhoneNumber);
+        dest.writeString(icon);
+        dest.writeString(name);
+        dest.writeStringList(types);
+        dest.writeString(vicinity);
+        dest.writeString(website);
+        dest.writeInt(distance);
     }
 }

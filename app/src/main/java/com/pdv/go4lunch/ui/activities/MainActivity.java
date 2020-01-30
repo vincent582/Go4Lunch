@@ -14,13 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -33,13 +30,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
+import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.utils.Permission;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
@@ -56,8 +53,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     //For DATA
+    public static final String BUNDLE_PLACES = "BUNDLE_PLACES";
     private PlacesViewModel mPlacesViewModel;
-    private List<Results> mPlaces = new ArrayList<>();
+    private List<Result> mRestaurants = new ArrayList<>();
 
 
     @Override
@@ -180,7 +178,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 @Override
                 public void onSuccess(Location location) {
                     ((Go4LunchApplication) getApplication()).setMyLocation(location);
-                    initPlaces(location);
+                    getNearestRestaurantFromLocation(location);
                 }
             });
         } else {
@@ -189,17 +187,30 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     /**
-     * Get All places from ViewModel and add in attribute mPlaces.
+     * Get nearest places from ViewModel.
      * @param location
      */
-    private void initPlaces(Location location){
-            mPlacesViewModel.getNearestPlaces(location).observe(this, new Observer<List<Results>>() {
-                @Override
-                public void onChanged(List<Results> results) {
-                    mPlaces.addAll(results);
-                    passArgumentToHostFragment();
-                }
-            });
+    private void getNearestRestaurantFromLocation(Location location) {
+        mPlacesViewModel.getNearestPlaces(location).observe(this, this::getDetailsRestaurant);
+    }
+
+    /**
+     * foreach places get details
+     * @param results
+     */
+    private void getDetailsRestaurant(List<Results> results) {
+        for (Results result :results) {
+            mPlacesViewModel.getPlace(result.getPlaceId()).observe(this, this::addRestaurantToRestaurantAttribut);
+        }
+        passArgumentToHostFragment();
+    }
+
+    /**
+     * add result to local attribute mRestaurant.
+     * @param result
+     */
+    private void addRestaurantToRestaurantAttribut(Result result) {
+        mRestaurants.add(result);
     }
 
     /**
@@ -207,9 +218,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
      */
     private void passArgumentToHostFragment() {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("PLACES", (ArrayList<? extends Parcelable>) mPlaces);
+        bundle.putParcelableArrayList(BUNDLE_PLACES, (ArrayList<? extends Parcelable>) mRestaurants);
         mNavController.setGraph(R.navigation.nav_graph, bundle);
-
     }
 
     /**
@@ -235,7 +245,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     /**
-     * On click on bottom navigation menu,
+     * On click on bottomNavigationBar menu,
      * Put Bundle as argument and navigate to the menuItem destination
      * @param menuItem
      * @return
@@ -243,7 +253,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("PLACES", (ArrayList<? extends Parcelable>) mPlaces);
+        bundle.putParcelableArrayList(BUNDLE_PLACES, (ArrayList<? extends Parcelable>) mRestaurants);
         mNavController.navigate(menuItem.getItemId(),bundle);
         return true;
     }

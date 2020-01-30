@@ -1,10 +1,7 @@
 package com.pdv.go4lunch.ui.viewHolder;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,35 +9,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.Place.Result;
-import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
 import com.pdv.go4lunch.utils.Utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.pdv.go4lunch.ui.activities.DetailsActivity.INTENT_PLACE;
+import static com.pdv.go4lunch.ui.activities.DetailsActivity.DETAILS_PLACES;
 
 public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
+    //FOR UI
     @BindView(R.id.item_restaurant)
     public ConstraintLayout mItemRestaurant;
     @BindView(R.id.item_title_restaurant)
@@ -58,18 +49,19 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.number_of_people_text_view)
     public TextView mNumberOfPeople;
 
+    //CONSTRUCTOR
     public PlacesViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    @SuppressLint("ResourceAsColor")
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void updateWithPlaces(Result place){
+    /**
+     * Update view with item restaurant
+     * @param restaurant
+     */
+    public void updateWithPlaces(Result restaurant){
 
-        Log.e("TAG", "Place Name : "+ place.getName());
-
-        UserHelper.getAllUserForRestaurant(place.getName())
+        UserHelper.getAllUserForRestaurant(restaurant.getName())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -82,25 +74,46 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
                     }
                 });
 
-        if (place.getPhotos() != null){
-            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+place.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
-            Log.e("TAG", "URL : " + url);
+        mTitleRestaurant.setText(restaurant.getName());
+        mAdressRestaurant.setText(restaurant.getVicinity());
+        mDistanceRestaurant.setText(restaurant.getDistance()+"m");
+
+        setRestaurantSchedules(restaurant);
+        setRestaurantPicture(restaurant);
+
+        mItemRestaurant.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetailsActivity.class);
+            intent.putExtra(DETAILS_PLACES, restaurant);
+            v.getContext().startActivity(intent);
+        });
+    }
+
+    /**
+     * Update picture of the Item
+     * @param restaurant
+     */
+    private void setRestaurantPicture(Result restaurant) {
+        if (restaurant.getPhotos() != null){
+            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurant.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
             Glide.with(mPictureRestaurant.getContext())
                     .load(url)
                     .centerCrop()
                     .into(mPictureRestaurant);
         }
+    }
 
-        mTitleRestaurant.setText(place.getName());
-        mAdressRestaurant.setText(place.getVicinity());
-
-        if (place.getOpeningHours() != null) {
-            if (place.getOpeningHours().getOpenNow()) {
+    /**
+     * Set schedules of the restaurant
+     * @param restaurant
+     */
+    private void setRestaurantSchedules(Result restaurant) {
+        if (restaurant.getOpeningHours() != null) {
+            if (restaurant.getOpeningHours().getOpenNow()) {
                 Calendar calendar = Calendar.getInstance();
                 int day = calendar.get(Calendar.DAY_OF_WEEK);
                 //Api give array size 1 if place open 24/7
-                if (place.getOpeningHours().getPeriods().size() > 1){
-                    String time = place.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
+                if (restaurant.getOpeningHours().getPeriods().size() > 1){
+                    String time = restaurant.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
                     mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time));
                 }else {
                     mOpeningRestaurant.setText("Open 24/7");
@@ -112,16 +125,5 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
         }else {
             mOpeningRestaurant.setText("");
         }
-
-        mDistanceRestaurant.setText(place.getDistance()+"m");
-
-        mItemRestaurant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
-                intent.putExtra(INTENT_PLACE, place);
-                v.getContext().startActivity(intent);
-            }
-        });
     }
 }
