@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -48,6 +52,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     //For Navigation
     private NavController mNavController;
     private AppBarConfiguration appBarConfiguration;
+    private DrawerLayout mDrawerLayout;
 
     //For Localisation
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -62,25 +67,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
         mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-
-        configureNavControllerWithNavigationView();
+        configureNavigationViewAndBottomNavigationView();
         configureNavControllerWithToolbarAndAppBarConfig();
-        configureBottomNavigationView();
-
         getLocation();
     }
 
     /**
-     * Setup navigationView to the navController.
+     * Setup navigationView and bottomNavigationView to the navController.
+     * Setup onNavigationItemSelected.
      */
-    public void configureNavControllerWithNavigationView() {
+    public void configureNavigationViewAndBottomNavigationView() {
         NavigationView navView = findViewById(R.id.navigation_drawer);
-        NavigationUI.setupWithNavController(navView, mNavController);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_bar);
+        navView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
         updateNavigationDrawerUI(navView);
     }
 
@@ -114,18 +117,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     /**
-     * Setup onNavigationItemSelected in bottomNavigationView.
-     */
-    private void configureBottomNavigationView() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_bar);
-        bottomNav.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-    }
-
-    /**
      * Setup NavController with Toolbar and config.
      */
     private void configureNavControllerWithToolbarAndAppBarConfig() {
-        DrawerLayout mDrawerLayout = findViewById(R.id.activity_main_layout_drawer);
+        mDrawerLayout = findViewById(R.id.activity_main_layout_drawer);
         //Configure appBar to have hamburger icon on fragments
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.mapFragment, R.id.listViewFragment
                         , R.id.workMatesFragment, R.id.yourLunchFragment, R.id.settingsFragment, R.id.logoutFragment)
@@ -252,9 +247,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Log.e("TAG", "onNavigationItemSelected: "+menuItem.getItemId());
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(BUNDLE_PLACES, (ArrayList<? extends Parcelable>) mRestaurants);
         mNavController.navigate(menuItem.getItemId(),bundle);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 }

@@ -26,6 +26,4 @@ public class PlacesViewModel extends ViewModel {
     public MutableLiveData<Result> getPlace(String id){
         return mPlacesRepository.getRestaurantDetails(id);
     }
-
-
 }

@@ -25,6 +25,7 @@ import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -54,7 +55,7 @@ public class YourLunchFragment extends Fragment {
     Button mCancelBtn;
 
     //FOR DATA
-    private List<Result> mRestaurants;
+    private List<Result> mRestaurants = new ArrayList<>();
 
     /**
      * Get Arguments
@@ -67,7 +68,7 @@ public class YourLunchFragment extends Fragment {
         if (getArguments() != null)
         {
             mRestaurants = getArguments().getParcelableArrayList(BUNDLE_PLACES);
-            Log.e("TAG", "onCreateView listViewFragment fragment: " + getArguments().getParcelableArrayList("PLACES"));
+            Log.e("TAG", "onCreateView listViewFragment fragment: " + getArguments().getParcelableArrayList(BUNDLE_PLACES));
         }
     }
 
@@ -99,6 +100,7 @@ public class YourLunchFragment extends Fragment {
      * @param user
      */
     private void getPlace(User user) {
+        Log.e("TAG", "getPlace: "+mRestaurants);
         for (Result mRestaurant : mRestaurants){
             if (user.getRestaurantId() == mRestaurant.getPlace_id()){
                 updateView(mRestaurant);

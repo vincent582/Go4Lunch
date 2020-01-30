@@ -55,7 +55,7 @@ public class ListViewFragment extends Fragment {
         if (getArguments() != null)
         {
             mRestaurant = getArguments().getParcelableArrayList(BUNDLE_PLACES);
-            Log.e("TAG", "onCreateView listViewFragment fragment: " + getArguments().getParcelableArrayList("PLACES"));
+            Log.e("TAG", "onCreateView listViewFragment fragment: " + getArguments().getParcelableArrayList(BUNDLE_PLACES));
         }
     }
 
