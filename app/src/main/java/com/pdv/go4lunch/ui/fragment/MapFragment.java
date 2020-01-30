@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.fragment;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,21 +15,48 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.pdv.go4lunch.Go4LunchApplication;
+import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.ui.activities.DetailsActivity;
+import com.pdv.go4lunch.utils.Permission;
+
+import java.util.List;
+
+import static com.pdv.go4lunch.ui.activities.DetailsActivity.DETAILS_PLACES;
+import static com.pdv.go4lunch.ui.activities.MainActivity.BUNDLE_PLACES;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Location myLocation;
-    private int DEFAULT_ZOOM = 18;
-    private LatLng mDefaultLocation = new LatLng(10,10);
+    private int DEFAULT_ZOOM = 17;
 
+    private List<Result> mRestaurants;
+
+    /**
+     * Get Arguments Bundle from activity.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        if (getArguments() != null)
+        {
+            Log.e("TAG", "onCreateView map fragment: " + getArguments().getParcelableArrayList(BUNDLE_PLACES));
+            mRestaurants = getArguments().getParcelableArrayList(BUNDLE_PLACES);
+        }
+
         initMap();
         return view;
     }
@@ -65,7 +93,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * if location != null showing myLocation on map
-     * else showing default position map.
      */
     private void updateLocationUI() {
         if (mMap == null) {
@@ -75,97 +102,56 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             if (myLocation != null) {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(myLocation.getLatitude(),
-                                myLocation.getLongitude()), DEFAULT_ZOOM));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()), DEFAULT_ZOOM));
+                putMarkerOnMap();
             } else {
-                mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                if(!Permission.checkIfLocationPermissionGranted(getContext())){
+                    Snackbar.make(getView(),"We can't access to your location, please check location permission!",Snackbar.LENGTH_LONG).show();
+                }
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    private PlacesViewModel mPlacesViewModel;
-    private List<Results> mPlaces;
-
-    private void getNearestPlaces() {
-            mPlacesViewModel.getNearestPlaces().observe(this, this::putMarkerOnMap);
-    }
-
-    private void putMarkerOnMap(List<Results> results) {
-        mPlaces = results;
+    /**
+     * Showing markers on map for each restaurant.
+     */
+    private void putMarkerOnMap() {
         mMap.clear();
-        for (Results place: mPlaces) {
+        for (Result place: mRestaurants) {
             Double lat = place.getGeometry().getLocation().getLat();
             Double lng = place.getGeometry().getLocation().getLng();
-            MarkerOptions markerOptions = new MarkerOptions();
             LatLng latLng = new LatLng(lat, lng);
+            MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
 
-            UserHelper.getAllUserForRestaurant(place.getName())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.getResult().isEmpty()){
-                                for (QueryDocumentSnapshot snapshot : task.getResult()){
-                                    Log.e("TAG", "onComplete: "+snapshot.toObject(User.class).getRestaurant());
-                                }
-                                markerOptions.icon((BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red)));
-                            }else{
-                                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_green));
-                            }
-                        }
-                    });
+            markerOptions.icon((BitmapDescriptorFactory.fromResource(R.drawable.icon_restaurant_red)));
 
             Marker m = mMap.addMarker(markerOptions);
-            m.setTag(place.getPlaceId());
+            m.setTag(place.getPlace_id());
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    callApiPlaceToStartDetailsActivity(marker);
+                    startDetailsActivity(marker);
                     return false;
                 }
             });
         }
     }
 
-
-    private void callApiPlaceToStartDetailsActivity(Marker marker) {
-        String placeId = marker.getTag().toString();
-
-        mPlacesViewModel.getPlace(placeId).observe(this, new Observer<Result>() {
-            @Override
-            public void onChanged(Result result) {
+    /**
+     * Start DetailsActivity with restaurant in intent
+     * @param marker
+     */
+    private void startDetailsActivity(Marker marker) {
+        for (Result result : mRestaurants) {
+            if (result.getPlace_id() == marker.getTag().toString()){
                 Intent intent = new Intent(getContext(), DetailsActivity.class);
-                intent.putExtra(INTENT_PLACE, result);
+                intent.putExtra(DETAILS_PLACES, result);
                 getContext().startActivity(intent);
             }
-        });
+        }
     }
-
-     */
 }

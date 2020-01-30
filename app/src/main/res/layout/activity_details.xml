@@ -102,7 +102,7 @@
             android:padding="15dp">
 
             <ImageView
-                android:id="@+id/phone_icon"
+                android:id="@+id/like_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"

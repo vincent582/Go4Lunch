@@ -25,7 +25,7 @@ public abstract class Utils {
 
     public static Boolean isCurrentUserLogged(){ return (getCurrentUser() != null); }
 
-    public static int getDistanceBetweenLocation(Location location1, Results place){
+    public static int getDistanceBetweenLocation(Location location1, Result place){
         Location location = new Location("Location");
         location.setLatitude(place.getGeometry().getLocation().getLat());
         location.setLongitude(place.getGeometry().getLocation().getLng());
@@ -67,10 +67,10 @@ public abstract class Utils {
         return null;
     }
 
-    public static void sortByDistance(List<Results> results) {
-        Collections.sort(results, new Comparator<Results>() {
+    public static void sortByDistance(List<Result> result) {
+        Collections.sort(result, new Comparator<Result>() {
             @Override
-            public int compare(Results o1, Results o2) {
+            public int compare(Result o1, Result o2) {
                 return o1.getDistance() - o2.getDistance();
             }
         });
