@@ -16,14 +16,11 @@ import java.util.List;
 
 public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHolder> {
 
-    private List<Result> mPlaces;
+    //FOR DATA
+    private List<Result> mRestaurant;
 
+    //CONSTRUCTOR
     public PlacesRecyclerViewAdapter(){}
-
-    public void updatedPlaces(List<Result> places){
-        this.mPlaces = places;
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override
@@ -35,16 +32,25 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHo
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull PlacesViewHolder viewHolder , int position) {
-        viewHolder.updateWithPlaces(this.mPlaces.get(position));
+        viewHolder.updateWithPlaces(this.mRestaurant.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if (mPlaces != null) {
-            return mPlaces.size();
+        if (mRestaurant != null) {
+            return mRestaurant.size();
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Update restaurant list
+     * @param places
+     */
+    public void updatedPlaces(List<Result> places){
+        this.mRestaurant = places;
+        notifyDataSetChanged();
     }
 
 }
