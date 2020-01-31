@@ -1,16 +1,14 @@
 package com.pdv.go4lunch.Model.Place;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Geometry;
-
 import java.util.List;
 
-public class Result implements Parcelable {
+public class Result implements Parcelable{
 
     @SerializedName("place_id")
     @Expose
@@ -32,15 +30,20 @@ public class Result implements Parcelable {
     private String vicinity;
     @SerializedName("photos")
     @Expose
-    private List<Photo> photos = null;
+    private List<Photo> photos;
     @SerializedName("geometry")
     @Expose
     private Geometry geometry  = null;
     @SerializedName("website")
     @Expose
     private String website;
+    @SerializedName("opening_hours")
+    @Expose
+    private OpeningHours openingHours;
 
     private int distance;
+
+    private Boolean isSomeoneEatingHere = false;
 
     protected Result(Parcel in) {
         place_id = in.readString();
@@ -49,9 +52,11 @@ public class Result implements Parcelable {
         name = in.readString();
         types = in.createStringArrayList();
         vicinity = in.readString();
+        photos = in.createTypedArrayList(Photo.CREATOR);
         website = in.readString();
         distance = in.readInt();
     }
+
 
     public static final Creator<Result> CREATOR = new Creator<Result>() {
         @Override
@@ -65,19 +70,6 @@ public class Result implements Parcelable {
         }
     };
 
-    public OpeningHours getOpeningHours() {
-        return openingHours;
-    }
-
-    public void setOpeningHours(OpeningHours openingHours) {
-        this.openingHours = openingHours;
-    }
-
-    @SerializedName("opening_hours")
-    @Expose
-    private OpeningHours openingHours;
-
-
     public Geometry getGeometry() {
         return geometry;
     }
@@ -86,6 +78,13 @@ public class Result implements Parcelable {
         this.geometry = geometry;
     }
 
+    public OpeningHours getOpeningHours() {
+        return openingHours;
+    }
+
+    public void setOpeningHours(OpeningHours openingHours) {
+        this.openingHours = openingHours;
+    }
 
     public String getFormattedPhoneNumber() {
         return formattedPhoneNumber;
@@ -159,6 +158,14 @@ public class Result implements Parcelable {
         this.place_id = place_id;
     }
 
+    public Boolean getSomeoneEatingHere() {
+        return isSomeoneEatingHere;
+    }
+
+    public void setSomeoneEatingHere(Boolean someoneEatingHere) {
+        isSomeoneEatingHere = someoneEatingHere;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -172,7 +179,9 @@ public class Result implements Parcelable {
         dest.writeString(name);
         dest.writeStringList(types);
         dest.writeString(vicinity);
+        dest.writeTypedList(photos);
         dest.writeString(website);
         dest.writeInt(distance);
+        dest.writeByte((byte) (isSomeoneEatingHere == null ? 0 : isSomeoneEatingHere ? 1 : 2));
     }
 }

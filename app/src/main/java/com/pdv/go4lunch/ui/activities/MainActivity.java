@@ -254,4 +254,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        super.onBackPressed();
+    }
 }

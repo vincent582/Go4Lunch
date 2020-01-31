@@ -1,6 +1,5 @@
 package com.pdv.go4lunch.API;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -8,7 +7,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.Model.User;
 
 import java.util.HashMap;
@@ -31,12 +29,8 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(Uid).get();
     }
 
-    public static Task<Void> updateUserRestaurant(String restaurant,String Uid){
-        return UserHelper.getUsersCollection().document(Uid).update("restaurant",restaurant);
-    }
-
-    public static Task<Void> updateUserRestaurantId(String id,String Uid){
-        return UserHelper.getUsersCollection().document(Uid).update("restaurantId",id);
+    public static Task<Void> updateUserRestaurantId(String restaurantId,String Uid){
+        return UserHelper.getUsersCollection().document(Uid).update("restaurantId",restaurantId);
     }
 
     public static Task<Void> deleteUser(String Uid){
@@ -47,7 +41,6 @@ public class UserHelper {
         DocumentReference docRef = UserHelper.getUsersCollection().document(Uid);
         // Remove the 'restaurant' field from the document
         Map<String,Object> updates = new HashMap<>();
-        updates.put("restaurant", FieldValue.delete());
         updates.put("restaurantId", FieldValue.delete());
         return docRef.update(updates);
     }
@@ -56,8 +49,8 @@ public class UserHelper {
         return UserHelper.getUsersCollection();
     }
 
-    public static Query getAllUserForRestaurant(String restaurant){
+    public static Query getAllUserForRestaurant(String restaurantId){
         return UserHelper.getUsersCollection()
-                .whereEqualTo("restaurant",restaurant);
+                .whereEqualTo("restaurantId",restaurantId);
     }
 }

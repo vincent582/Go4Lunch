@@ -89,4 +89,9 @@ public class ListViewFragment extends Fragment {
         adapter.updatedPlaces(mRestaurant);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUi();
+    }
 }

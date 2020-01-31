@@ -100,9 +100,8 @@ public class YourLunchFragment extends Fragment {
      * @param user
      */
     private void getPlace(User user) {
-        Log.e("TAG", "getPlace: "+mRestaurants);
         for (Result mRestaurant : mRestaurants){
-            if (user.getRestaurantId() == mRestaurant.getPlace_id()){
+            if (user.getRestaurantId() != null && user.getRestaurantId().equals(mRestaurant.getPlace_id())){
                 updateView(mRestaurant);
             }
         }
