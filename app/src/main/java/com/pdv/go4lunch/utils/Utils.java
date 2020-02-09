@@ -1,14 +1,12 @@
 package com.pdv.go4lunch.utils;
 
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
-import com.pdv.go4lunch.Model.Place.Result;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +23,7 @@ public abstract class Utils {
 
     public static Boolean isCurrentUserLogged(){ return (getCurrentUser() != null); }
 
-    public static int getDistanceBetweenLocation(Location location1, Result place){
+    public static int getDistanceBetweenLocation(Location location1, Results place){
         Location location = new Location("Location");
         location.setLatitude(place.getGeometry().getLocation().getLat());
         location.setLongitude(place.getGeometry().getLocation().getLng());
@@ -67,12 +65,24 @@ public abstract class Utils {
         return null;
     }
 
-    public static void sortByDistance(List<Result> result) {
-        Collections.sort(result, new Comparator<Result>() {
+    public static void sortByDistance(List<Results> results) {
+        Collections.sort(results, new Comparator<Results>() {
             @Override
-            public int compare(Result o1, Result o2) {
+            public int compare(Results o1, Results o2) {
                 return o1.getDistance() - o2.getDistance();
             }
         });
+    }
+
+    public static int getNumberOfStars(int nbrOfUsers, int nbrOfLikes){
+        int percent = (nbrOfLikes * 100) / nbrOfUsers;
+        if (percent < 30){
+            return 1;
+        }else if (percent >= 30 && percent <= 60){
+            return 2;
+        }else if (percent > 60){
+            return 3;
+        }
+        return 0;
     }
 }

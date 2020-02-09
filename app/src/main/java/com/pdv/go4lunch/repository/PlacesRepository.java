@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.pdv.go4lunch.API.GoogleApiService;
+import com.pdv.go4lunch.Model.AutoComplete.AutoComplete;
+import com.pdv.go4lunch.Model.AutoComplete.Prediction;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.GooglePlaces;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Place.Place;
@@ -20,11 +22,17 @@ import retrofit2.Response;
 
 public class PlacesRepository {
 
-    private String radius = "500";
+    private String radius = "100";
     private String type = "restaurant";
-    private String key = "AIzaSyBgfIX1oNwIm-vqIQxVdA8iMWuY9oZ4etA";
+    private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
+
+    private int callApi = 1;
 
     //FOR DATA
+    private MutableLiveData<List<Results>> mNearestPlaces = new MutableLiveData<>();
+    private MutableLiveData<Result> mPlaceDetails = new MutableLiveData<>();
+    private MutableLiveData<List<Prediction>> mAutoCompleteMutableLiveData = new MutableLiveData<List<com.pdv.go4lunch.Model.AutoComplete.Prediction>>();
+
     private static PlacesRepository mPlacesRepository;
     private GoogleApiService mGoogleApiService;
 
@@ -47,25 +55,23 @@ public class PlacesRepository {
      * @return
      */
     public MutableLiveData<List<Results>> getNearestRestaurants(Location location) {
-        MutableLiveData<List<Results>> nearestPlaces = new MutableLiveData<>();
         String locationToString = location.getLatitude()+","+location.getLongitude();
-
         Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,radius,type,key);
         call.enqueue(new Callback<GooglePlaces>() {
             @Override
             public void onResponse(Call<GooglePlaces> call, Response<GooglePlaces> response) {
                 GooglePlaces googlePlaces = response.body();
                 if (googlePlaces != null || googlePlaces.getResults() != null){
-                    nearestPlaces.setValue(googlePlaces.getResults());
-                    Log.e("TAG", "getAllPlaces in the repository: "+ nearestPlaces);
+                    mNearestPlaces.setValue(googlePlaces.getResults());
+                    Log.e("TAG", "Call Api from repository (getNearestPlaces): "+ callApi++);
                 }
             }
             @Override
             public void onFailure(Call<GooglePlaces> call, Throwable t) {
-                nearestPlaces.setValue(null);
+                mNearestPlaces.setValue(null);
             }
         });
-        return nearestPlaces;
+        return mNearestPlaces;
     }
 
     /**
@@ -73,21 +79,43 @@ public class PlacesRepository {
      * @param id
      * @return
      */
-    public MutableLiveData<Result> getRestaurantDetails(String id){
-        MutableLiveData<Result> mPlaceDetails = new MutableLiveData<>();
+    public MutableLiveData<Result> getRestaurantDetails(String id) {
         Call<Place> call = mGoogleApiService.getPlace(id,key);
         call.enqueue(new Callback<Place>() {
             @Override
             public void onResponse(Call<Place> call, Response<Place> response) {
-                Result place = response.body().getResult();
-                if (place != null){
-                    mPlaceDetails.setValue(place);
-                }
+                mPlaceDetails.setValue(response.body().getResult());
             }
             @Override
             public void onFailure(Call<Place> call, Throwable t) {
+                mPlaceDetails = null;
             }
         });
+        Log.e("TAG", "Call Api from repository (getDetailsRestaurant): "+ callApi++);
         return mPlaceDetails;
+    }
+
+
+    /**
+     * Get Places around with autocomplete
+     * @param input
+     * @param location
+     * @param sessionToken
+     * @return
+     */
+    public MutableLiveData<List<Prediction>> getAutoCompleteRequest(String input, Location location, String sessionToken){
+        String locationToString = location.getLatitude()+","+location.getLongitude();
+        Call<AutoComplete> call = mGoogleApiService.getAutoCompleteRequest(input,radius,locationToString,key,sessionToken);
+        call.enqueue(new Callback<AutoComplete>() {
+            @Override
+            public void onResponse(Call<AutoComplete> call, Response<AutoComplete> response) {
+                mAutoCompleteMutableLiveData.setValue(response.body().getPredictions());
+            }
+            @Override
+            public void onFailure(Call<AutoComplete> call, Throwable t) {
+            }
+        });
+
+        return mAutoCompleteMutableLiveData;
     }
 }

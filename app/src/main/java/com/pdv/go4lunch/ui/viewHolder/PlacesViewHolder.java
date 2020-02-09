@@ -2,10 +2,10 @@ package com.pdv.go4lunch.ui.viewHolder;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,20 +14,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Place.Result;
+import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
 import com.pdv.go4lunch.utils.Utils;
 
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.pdv.go4lunch.ui.activities.DetailsActivity.DETAILS_PLACES;
+import static com.pdv.go4lunch.ui.fragment.MapFragment.PLACE_ID;
 
 public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
@@ -48,6 +54,8 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     public LinearLayout mPeopleLinearLayout;
     @BindView(R.id.number_of_people_text_view)
     public TextView mNumberOfPeople;
+    @BindView(R.id.ratingRestaurant)
+    public RatingBar mRatingRestaurant;
 
     //CONSTRUCTOR
     public PlacesViewHolder(@NonNull View itemView) {
@@ -58,32 +66,45 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     /**
      * Update view with item restaurant
      * @param restaurant
+     * @param restaurantListFromFirestore
      */
-    public void updateWithPlaces(Result restaurant){
+    public void updateWithPlaces(Results restaurant, List<Restaurant> restaurantListFromFirestore){
 
-        UserHelper.getAllUserForRestaurant(restaurant.getName())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (!task.getResult().isEmpty()){
-                            Log.e("TAG", "Number Of people eating here : "+task.getResult().size());
-                            mPeopleLinearLayout.setVisibility(View.VISIBLE);
-                            mNumberOfPeople.setText("("+task.getResult().size()+")");
-                        }
-                    }
-                });
+        for (Restaurant resto: restaurantListFromFirestore) {
+
+            if (resto.getId().equals(restaurant.getPlaceId()) && resto.getLikes() > 0){
+                mRatingRestaurant.setVisibility(View.VISIBLE);
+                mRatingRestaurant.setNumStars(resto.getLikes());
+                mRatingRestaurant.setRating(resto.getLikes());
+            } else if (resto.getId().equals(restaurant.getPlaceId()) && resto.getLikes() == 0){
+                mRatingRestaurant.setVisibility(View.INVISIBLE);
+            }
+
+            if (resto.getId().equals(restaurant.getPlaceId()) && resto.getNbrPeopleEatingHere() > 0){
+                mPeopleLinearLayout.setVisibility(View.VISIBLE);
+                mNumberOfPeople.setText("("+resto.getNbrPeopleEatingHere()+")");
+            } else if (resto.getId().equals(restaurant.getPlaceId()) && resto.getNbrPeopleEatingHere() == 0){
+                mPeopleLinearLayout.setVisibility(View.INVISIBLE);
+            }
+        }
 
         mTitleRestaurant.setText(restaurant.getName());
         mAdressRestaurant.setText(restaurant.getVicinity());
         mDistanceRestaurant.setText(restaurant.getDistance()+"m");
 
-        setRestaurantSchedules(restaurant);
-        setRestaurantPicture(restaurant);
+        if (restaurant.getOpeningHours().getOpenNow()){
+           mOpeningRestaurant.setText("Open");
+        }
+        else {
+            mOpeningRestaurant.setText("Closed");
+            mOpeningRestaurant.setTextColor(Color.RED);
+        }
+
+        //setRestaurantPicture(restaurant);
 
         mItemRestaurant.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), DetailsActivity.class);
-            intent.putExtra(DETAILS_PLACES, restaurant);
+            intent.putExtra(PLACE_ID, restaurant.getPlaceId());
             v.getContext().startActivity(intent);
         });
     }
@@ -92,38 +113,13 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
      * Update picture of the Item
      * @param restaurant
      */
-    private void setRestaurantPicture(Result restaurant) {
+    private void setRestaurantPicture(Results restaurant) {
         if (restaurant.getPhotos() != null){
             String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurant.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
             Glide.with(mPictureRestaurant.getContext())
                     .load(url)
                     .centerCrop()
                     .into(mPictureRestaurant);
-        }
-    }
-
-    /**
-     * Set schedules of the restaurant
-     * @param restaurant
-     */
-    private void setRestaurantSchedules(Result restaurant) {
-        if (restaurant.getOpeningHours() != null) {
-            if (restaurant.getOpeningHours().getOpenNow()) {
-                Calendar calendar = Calendar.getInstance();
-                int day = calendar.get(Calendar.DAY_OF_WEEK);
-                //Api give array size 1 if place open 24/7
-                if (restaurant.getOpeningHours().getPeriods().size() > 1){
-                    String time = restaurant.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
-                    mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time));
-                }else {
-                    mOpeningRestaurant.setText("Open 24/7");
-                }
-            }else{
-                mOpeningRestaurant.setText("Closed");
-                mOpeningRestaurant.setTextColor(Color.RED);
-            }
-        }else {
-            mOpeningRestaurant.setText("");
         }
     }
 }

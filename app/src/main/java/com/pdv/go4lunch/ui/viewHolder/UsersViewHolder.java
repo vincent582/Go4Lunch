@@ -1,6 +1,9 @@
 package com.pdv.go4lunch.ui.viewHolder;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,10 +11,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.ui.activities.DetailsActivity;
+import com.pdv.go4lunch.utils.Utils;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.pdv.go4lunch.ui.fragment.MapFragment.PLACE_ID;
 
 public class UsersViewHolder extends RecyclerView.ViewHolder {
 
@@ -26,12 +35,24 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
-    @SuppressLint("ResourceAsColor")
     public void updateWithUsers(User user) {
-        if (user != null) {
-            if (user.getRestaurant() != null) {
-                mNameWorkmate.setText(user.getUserName()+ " is eating at "+ user.getRestaurant());
-                mNameWorkmate.setTextColor(R.color.colorBlack);
+        if (user != null){
+            if (user.getRestaurantName() != null) {
+                if(itemView.getContext() instanceof DetailsActivity){
+                    mNameWorkmate.setText(user.getUserName()+ " is joining!");
+                }
+                else {
+                    mNameWorkmate.setText(user.getUserName()+ " is eating at "+ user.getRestaurantName());
+                    itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
+                                intent.putExtra(PLACE_ID, user.getRestaurantId());
+                                v.getContext().startActivity(intent);
+                        }
+                    });
+                }
+                mNameWorkmate.setTextColor(itemView.getResources().getColor(R.color.colorBlack));
             }else {
                 mNameWorkmate.setText(user.getUserName()+ " Hasn't decided yet");
             }

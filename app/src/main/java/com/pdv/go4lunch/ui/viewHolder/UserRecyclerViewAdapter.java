@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 
@@ -14,7 +15,7 @@ public class UserRecyclerViewAdapter extends FirestoreRecyclerAdapter<User,Users
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.
-     * See {@link FirestoreRecyclerOptions} for configuration options.
+     * See {@link FirestoreRecyclerOptions} for searchable options.
      * @param options
      */
     public UserRecyclerViewAdapter(FirestoreRecyclerOptions<User> options) {

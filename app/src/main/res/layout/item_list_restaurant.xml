@@ -110,7 +110,7 @@
             android:layout_weight="1">
 
             <RatingBar
-                android:id="@+id/ratingBar"
+                android:id="@+id/ratingRestaurant"
                 style="@android:style/Widget.Holo.Light.RatingBar.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,8 +118,11 @@
                 android:isIndicator="true"
                 android:numStars="3"
                 android:progressTint="@color/quantum_yellowA700"
-                android:rating="1"
-                android:stepSize="1" />
+                android:rating="2"
+                android:rotation="180"
+                android:scaleY="-1"
+                android:stepSize="1"
+                android:visibility="invisible" />
         </FrameLayout>
 
     </LinearLayout>

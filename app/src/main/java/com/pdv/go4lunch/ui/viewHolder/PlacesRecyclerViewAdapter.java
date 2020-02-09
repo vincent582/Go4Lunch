@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pdv.go4lunch.Model.Place.Result;
+import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
+import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.R;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.List;
 public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHolder> {
 
     //FOR DATA
-    private List<Result> mRestaurant;
+    private List<Results> mRestaurant;
+    private List<Restaurant> mRestaurantListFromFirestore;
 
     //CONSTRUCTOR
     public PlacesRecyclerViewAdapter(){}
@@ -29,7 +31,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHo
 
     @Override
     public void onBindViewHolder(@NonNull PlacesViewHolder viewHolder , int position) {
-        viewHolder.updateWithPlaces(this.mRestaurant.get(position));
+        viewHolder.updateWithPlaces(this.mRestaurant.get(position),mRestaurantListFromFirestore);
     }
 
     @Override
@@ -44,10 +46,11 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<PlacesViewHo
     /**
      * Update restaurant list
      * @param places
+     * @param restaurantListFromFirestore
      */
-    public void updatedPlaces(List<Result> places){
+    public void updatedPlaces(List<Results> places, List<Restaurant> restaurantListFromFirestore){
         this.mRestaurant = places;
+        this.mRestaurantListFromFirestore = restaurantListFromFirestore;
         notifyDataSetChanged();
     }
-
 }

@@ -17,6 +17,8 @@ import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
 
+import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
+
 public class WorkMatesFragment extends Fragment{
 
     private UserRecyclerViewAdapter adapter;

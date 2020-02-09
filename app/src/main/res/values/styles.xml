@@ -23,4 +23,12 @@
         <item name="colorControlNormal">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
+        <item name="queryBackground">@android:color/white</item>
+        <item name="queryHint">Search</item>
+        <item name="closeIcon">@drawable/ic_close_black_24dp</item>
+        <item name="voiceIcon">@drawable/ic_mic_black_24dp</item>
+    </style>
+
 </resources>
