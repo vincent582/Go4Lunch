@@ -40,8 +40,9 @@ public class Result implements Parcelable{
     @SerializedName("opening_hours")
     @Expose
     private OpeningHours openingHours;
-
     private int distance;
+    private int nbrPeopleEatingHere;
+    private int nbrOfStars;
 
     private Boolean isSomeoneEatingHere = false;
 
@@ -183,5 +184,21 @@ public class Result implements Parcelable{
         dest.writeString(website);
         dest.writeInt(distance);
         dest.writeByte((byte) (isSomeoneEatingHere == null ? 0 : isSomeoneEatingHere ? 1 : 2));
+    }
+
+    public int getNbrPeopleEatingHere() {
+        return nbrPeopleEatingHere;
+    }
+
+    public void setNbrPeopleEatingHere(int nbrPeopleEatingHere) {
+        this.nbrPeopleEatingHere = nbrPeopleEatingHere;
+    }
+
+    public int getNbrOfStars() {
+        return nbrOfStars;
+    }
+
+    public void setNbrOfStars(int nbrOfStars) {
+        this.nbrOfStars = nbrOfStars;
     }
 }

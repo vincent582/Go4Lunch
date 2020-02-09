@@ -29,8 +29,8 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(Uid).get();
     }
 
-    public static Task<Void> updateUserRestaurantId(String restaurantId,String Uid){
-        return UserHelper.getUsersCollection().document(Uid).update("restaurantId",restaurantId);
+    public static Task<Void> updateUserRestaurantNameAndId(String Uid,String restaurantId,String restaurantName){
+        return UserHelper.getUsersCollection().document(Uid).update("restaurantId",restaurantId, "restaurantName",restaurantName);
     }
 
     public static Task<Void> deleteUser(String Uid){
@@ -42,6 +42,7 @@ public class UserHelper {
         // Remove the 'restaurant' field from the document
         Map<String,Object> updates = new HashMap<>();
         updates.put("restaurantId", FieldValue.delete());
+        updates.put("restaurantName", FieldValue.delete());
         return docRef.update(updates);
     }
 

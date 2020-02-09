@@ -4,14 +4,8 @@ public class Restaurant {
 
     private String id;
     private String name;
-    private int rate;
-    private Boolean isSomeoneEatingHere;
-
-    public Restaurant (String name,String id,Boolean isSomeoneEatingHere){
-        this.id = id;
-        this.name = name;
-        this.isSomeoneEatingHere = isSomeoneEatingHere;
-    }
+    private int likes;
+    private int nbrPeopleEatingHere;
 
     public Restaurant(){}
 
@@ -36,19 +30,13 @@ public class Restaurant {
         this.name = name;
     }
 
-    public int getRate() {
-        return rate;
+    public int getNbrPeopleEatingHere() {
+        return nbrPeopleEatingHere;
     }
 
-    public void setRate(int rate) {
-        this.rate = rate;
-    }
+    public void setNbrPeopleEatingHere(int someoneEatingHere) { nbrPeopleEatingHere = someoneEatingHere; }
 
-    public Boolean getSomeoneEatingHere() {
-        return isSomeoneEatingHere;
-    }
+    public int getLikes() { return likes; }
 
-    public void setSomeoneEatingHere(Boolean someoneEatingHere) {
-        isSomeoneEatingHere = someoneEatingHere;
-    }
+    public void setLikes(int likes) { this.likes = likes; }
 }

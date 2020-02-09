@@ -56,6 +56,7 @@ public class Results {
     @Expose
     private String vicinity;
 
+    private int distance;
     private Boolean someoneEatHere;
 
 
@@ -186,8 +187,6 @@ public class Results {
     public void setSomeoneEatHere(Boolean someoneEatHere) {
         this.someoneEatHere = someoneEatHere;
     }
-
-    private int distance;
 
     public int getDistance() {
         return distance;
