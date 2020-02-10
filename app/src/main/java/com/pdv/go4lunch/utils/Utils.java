@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
+import com.pdv.go4lunch.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,7 @@ public abstract class Utils {
         try {
             Date date = format.parse(String.valueOf(stringBuilder));
             calendar.setTime(date);
-            String result = "Open until ";
+            String result = String.valueOf(R.string.opening_time);
             if(calendar.get(Calendar.HOUR) == 0){
                 result += "00";
             }else{

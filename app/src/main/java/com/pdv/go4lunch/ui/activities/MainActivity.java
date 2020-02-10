@@ -66,8 +66,7 @@ public class MainActivity extends BaseActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_bar);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.mapFragment, R.id.listViewFragment, R.id.workMatesFragment,
-                R.id.settingsFragment, R.id.yourLunchFragment, R.id.logoutFragment)
+                R.id.mapFragment, R.id.listViewFragment, R.id.workMatesFragment, R.id.yourLunchFragment, R.id.logoutFragment)
                 .setDrawerLayout(drawer)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
@@ -152,12 +151,12 @@ public class MainActivity extends BaseActivity {
         if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this,"Location Permission Granted",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,String.valueOf(R.string.permission_granted),Toast.LENGTH_SHORT).show();
             }
         }
         else if (requestCode == PERMISSIONS_REQUEST_CALL_PHONE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,String.valueOf(R.string.permission_call_granted),Toast.LENGTH_SHORT).show();
             }
         }
     }

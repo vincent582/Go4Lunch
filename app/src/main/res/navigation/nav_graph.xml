@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    android:label="I'm Hungry!"
     app:startDestination="@+id/mapFragment">
 
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.pdv.go4lunch.ui.fragment.MapFragment"
         android:label="I'm Hungry!"
-        tools:layout="@layout/fragment_map">
-    </fragment>
+        tools:layout="@layout/fragment_map"></fragment>
 
     <fragment
         android:id="@+id/listViewFragment"
@@ -23,7 +21,7 @@
         android:id="@+id/workMatesFragment"
         android:name="com.pdv.go4lunch.ui.fragment.WorkMatesFragment"
         android:label="Available workmates"
-        tools:layout="@layout/fragment_work_mates"/>
+        tools:layout="@layout/fragment_work_mates" />
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -34,11 +32,7 @@
         android:id="@+id/yourLunchFragment"
         android:name="com.pdv.go4lunch.ui.fragment.YourLunchFragment"
         android:label="Your Lunch"
-        tools:layout="@layout/fragment_your_lunch" >
-        <action
-            android:id="@+id/action_yourLunchFragment_self"
-            app:destination="@+id/yourLunchFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_your_lunch"/>
     <fragment
         android:id="@+id/logoutFragment"
         android:name="com.pdv.go4lunch.ui.fragment.LogoutFragment"

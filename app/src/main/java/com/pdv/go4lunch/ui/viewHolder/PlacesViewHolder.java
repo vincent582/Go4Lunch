@@ -93,10 +93,10 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
         mDistanceRestaurant.setText(restaurant.getDistance()+"m");
 
         if (restaurant.getOpeningHours().getOpenNow()){
-           mOpeningRestaurant.setText("Open");
+           mOpeningRestaurant.setText(R.string.open);
         }
         else {
-            mOpeningRestaurant.setText("Closed");
+            mOpeningRestaurant.setText(R.string.closed);
             mOpeningRestaurant.setTextColor(Color.RED);
         }
 

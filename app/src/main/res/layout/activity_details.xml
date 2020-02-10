@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_arrow_back_white_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
@@ -116,8 +126,9 @@
                 android:id="@+id/calling_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CALL"
+                android:text="@string/call"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -143,8 +154,9 @@
                 android:id="@+id/likes_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="LIKE"
+                android:text="@string/like"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -170,8 +182,9 @@
                 android:id="@+id/website_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="WEBSITE"
+                android:text="@string/website"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />

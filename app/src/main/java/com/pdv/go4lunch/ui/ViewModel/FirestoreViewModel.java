@@ -22,7 +22,6 @@ import java.util.List;
 
 public class FirestoreViewModel extends ViewModel {
 
-    private String TAG = "FIRESTORE_VIEW_MODEL";
     private MutableLiveData<List<Restaurant>> mListRestaurant = new MutableLiveData<>();
 
     /**
@@ -34,7 +33,7 @@ public class FirestoreViewModel extends ViewModel {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
-                    Log.e(TAG, "Listen failed.", e);
+                    Log.e("TAG", "Listen failed.", e);
                     mListRestaurant = null;
                     return;
                 }

@@ -7,14 +7,14 @@ tools:showIn="navigation_view">
     <item
         android:id="@+id/yourLunchFragment"
         android:icon="@drawable/ic_restaurant_menu_white_24dp"
-        android:title="YOUR LUNCH" />
+        android:title="@string/your_lunch" />
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:title="SETTINGS" />
+        android:title="@string/settings" />
     <item
         android:id="@+id/logoutFragment"
         android:icon="@drawable/ic_power_settings_new_white_24dp"
-        android:title="LOGOUT" />
+        android:title="@string/logout_MAJ" />
 </group>
 </menu>

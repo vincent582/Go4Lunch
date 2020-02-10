@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.Query;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
+import com.pdv.go4lunch.utils.Utils;
 
 import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
 

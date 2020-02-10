@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:context=".ui.fragment.YourLunchFragment">
 
         <ImageView
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="30dp"
             android:backgroundTint="#E53935"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -107,7 +107,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:gravity="center"
-            android:text="You didn't choose restaurant for lunch !"
+            android:text="@string/no_choice"
             android:textColor="@android:color/black"
             android:textSize="24sp" />
     </LinearLayout>

@@ -81,6 +81,8 @@ public class DetailsActivity extends AppCompatActivity {
     TextView mOpeningRestaurant;
     @BindView(R.id.ratingRestaurantDetails)
     RatingBar mRatingBar;
+    @BindView(R.id.iv_back)
+    ImageView mBackButton;
 
     //FOR DATA
     private UserRecyclerViewAdapter adapter;
@@ -184,6 +186,7 @@ public class DetailsActivity extends AppCompatActivity {
         setUpLikesBtn();
         setUpSelectRestaurantButton();
         setRestaurantSchedules(result);
+        setUpBackBtn();
     }
 
     /**
@@ -200,10 +203,10 @@ public class DetailsActivity extends AppCompatActivity {
                     String time = restaurant.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
                     mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time));
                 }else {
-                    mOpeningRestaurant.setText("Open 24/7");
+                    mOpeningRestaurant.setText(getResources().getString(R.string.open_24));
                 }
             }else{
-                mOpeningRestaurant.setText("Closed");
+                mOpeningRestaurant.setText(getResources().getString(R.string.closed));
             }
         }else {
             mOpeningRestaurant.setText("");
@@ -234,15 +237,15 @@ public class DetailsActivity extends AppCompatActivity {
      */
     private void goToWebsiteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Go to website ?").setMessage(mRestaurant.getWebsite());
-        builder.setPositiveButton("Go", (dialog, id) -> {
+        builder.setTitle(getResources().getString(R.string.go_to_website)).setMessage(mRestaurant.getWebsite());
+        builder.setPositiveButton(getResources().getString(R.string.go), (dialog, id) -> {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setData(Uri.parse(mRestaurant.getWebsite()));
             startActivity(intent);
         });
-        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
+        builder.setNegativeButton(getResources().getString(R.string.cancel), (dialog, id) -> dialog.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -267,13 +270,13 @@ public class DetailsActivity extends AppCompatActivity {
     public void checkPermissionCall(){
         if (Permission.checkIfCallingPermissionGranted(this)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Call the restaurantInfireStore ?").setMessage(mRestaurant.getFormattedPhoneNumber());
-            builder.setPositiveButton("Call", (dialog, id) -> {
+            builder.setTitle(getResources().getString(R.string.call_restaurant)).setMessage(mRestaurant.getFormattedPhoneNumber());
+            builder.setPositiveButton(getResources().getString(R.string.call), (dialog, id) -> {
                 Intent callingIntent = new Intent(Intent.ACTION_CALL);
                 callingIntent.setData(Uri.parse("tel:" + mRestaurant.getFormattedPhoneNumber()));
                 startActivity(callingIntent);
             });
-            builder.setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
+            builder.setNegativeButton(getResources().getString(R.string.cancel), (dialog, id) -> dialog.cancel());
             AlertDialog dialog = builder.create();
             dialog.show();
         }
@@ -298,7 +301,7 @@ public class DetailsActivity extends AppCompatActivity {
                     mFirestoreViewModel.addLikes(mRestaurantId,1);
                     mlikesIcon.setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.colorGrey), PorterDuff.Mode.MULTIPLY);
                     mlikesTextView.setTextColor(getResources().getColor(R.color.colorGrey));
-                    Toast.makeText(getBaseContext(), "You liked this restaurant", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), R.string.liked_restaurant, Toast.LENGTH_SHORT).show();
                 }
             });
         }else {
@@ -306,7 +309,7 @@ public class DetailsActivity extends AppCompatActivity {
             mFirestoreViewModel.addLikes(mRestaurantId, likes);
             mlikesIcon.setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.colorGrey), PorterDuff.Mode.MULTIPLY);
             mlikesTextView.setTextColor(getResources().getColor(R.color.colorGrey));
-            Toast.makeText(getBaseContext(), "You liked this restaurant", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.liked_restaurant, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -342,12 +345,21 @@ public class DetailsActivity extends AppCompatActivity {
 
         if (mUser.getRestaurantName() != null && mUser.getRestaurantName().equals(mRestaurant.getName())){
             UserHelper.deleteRestaurantFromUser(Utils.getCurrentUser().getUid());
-            Toast.makeText(this, "Lunch Canceled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.lunch_canceled, Toast.LENGTH_SHORT).show();
         }else{
             UserHelper.updateUserRestaurantNameAndId(getCurrentUser().getUid(),mRestaurant.getPlace_id(),mRestaurant.getName());
-            Toast.makeText(this, "Vous avez choisi ce restaurant", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.restaurant_chosen, Toast.LENGTH_SHORT).show();
         }
 
         getUserFromFirebase();
+    }
+
+    private void setUpBackBtn() {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
