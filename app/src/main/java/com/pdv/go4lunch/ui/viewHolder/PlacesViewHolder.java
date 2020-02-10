@@ -9,6 +9,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
@@ -71,11 +74,16 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     public void updateWithPlaces(Results restaurant, List<Restaurant> restaurantListFromFirestore){
 
         for (Restaurant resto: restaurantListFromFirestore) {
-
             if (resto.getId().equals(restaurant.getPlaceId()) && resto.getLikes() > 0){
-                mRatingRestaurant.setVisibility(View.VISIBLE);
-                mRatingRestaurant.setNumStars(resto.getLikes());
-                mRatingRestaurant.setRating(resto.getLikes());
+                UserHelper.getAllUsers().addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        int nbrOfStars = Utils.getNumberOfStars(queryDocumentSnapshots.size(),resto.getLikes());
+                        mRatingRestaurant.setVisibility(View.VISIBLE);
+                        mRatingRestaurant.setNumStars(nbrOfStars);
+                        mRatingRestaurant.setRating(nbrOfStars);
+                    }
+                });
             } else if (resto.getId().equals(restaurant.getPlaceId()) && resto.getLikes() == 0){
                 mRatingRestaurant.setVisibility(View.INVISIBLE);
             }

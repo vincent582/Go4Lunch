@@ -76,6 +76,7 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mPlacesViewModel.getListNearestRestaurants().observe(this,this::setDistanceBetweenRestaurantAndSortByNearest);
+
         return view;
     }
 

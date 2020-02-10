@@ -10,10 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -41,6 +44,7 @@ public class MainActivity extends BaseActivity {
     private NavController mNavController;
     private AppBarConfiguration mAppBarConfiguration;
     private Toolbar toolbar;
+    private BottomNavigationView bottomNavigationView;
 
     //For Localisation
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -63,10 +67,10 @@ public class MainActivity extends BaseActivity {
 
         DrawerLayout drawer = findViewById(R.id.activity_main_layout_drawer);
         NavigationView navView = findViewById(R.id.navigation_drawer);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_bar);
+        bottomNavigationView = findViewById(R.id.bottom_navigation_bar);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.mapFragment, R.id.listViewFragment, R.id.workMatesFragment, R.id.yourLunchFragment, R.id.logoutFragment)
+                R.id.mapFragment, R.id.listViewFragment, R.id.workMatesFragment)
                 .setDrawerLayout(drawer)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
@@ -75,6 +79,32 @@ public class MainActivity extends BaseActivity {
         updateNavigationDrawerUI(navView);
 
         getLocation();
+
+        addDestinationChangeListenerToNavController();
+    }
+
+    private void addDestinationChangeListenerToNavController() {
+        mNavController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if (destination.getId() == R.id.settingsFragment) {
+                    toolbar.setTitle(getResources().getString(R.string.settings_title_fragment));
+                    bottomNavigationView.setVisibility(View.GONE);
+                } else if (destination.getId() == R.id.logoutFragment) {
+                    toolbar.setTitle(getResources().getString(R.string.logout_title_fragment));
+                    bottomNavigationView.setVisibility(View.GONE);
+                } else if (destination.getId() == R.id.yourLunchFragment) {
+                    toolbar.setTitle(getResources().getString(R.string.your_lunch_title_fragment));
+                    bottomNavigationView.setVisibility(View.GONE);
+                } else if (destination.getId() == R.id.workMatesFragment){
+                    toolbar.setTitle(getResources().getString(R.string.workmates_title_fragment));
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                } else {
+                    toolbar.setTitle(getResources().getString(R.string.hungry_title_fragment));
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override

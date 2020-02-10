@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.utils;
 
+import android.content.Context;
 import android.location.Location;
 
 import androidx.annotation.Nullable;
@@ -34,7 +35,7 @@ public abstract class Utils {
         return distance;
     }
 
-    public static String formatTimeFromOpenningHours(String time) {
+    public static String formatTimeFromOpenningHours(String time, Context context){
         Calendar calendar = Calendar.getInstance();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(time);
@@ -44,7 +45,7 @@ public abstract class Utils {
         try {
             Date date = format.parse(String.valueOf(stringBuilder));
             calendar.setTime(date);
-            String result = String.valueOf(R.string.opening_time);
+            String result = context.getResources().getString(R.string.opening_time);
             if(calendar.get(Calendar.HOUR) == 0){
                 result += "00";
             }else{

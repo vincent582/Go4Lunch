@@ -201,7 +201,7 @@ public class DetailsActivity extends AppCompatActivity {
                 //Api give array size 1 if place open 24/7
                 if (restaurant.getOpeningHours().getPeriods().size() > 1){
                     String time = restaurant.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
-                    mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time));
+                    mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time,this));
                 }else {
                     mOpeningRestaurant.setText(getResources().getString(R.string.open_24));
                 }
@@ -212,7 +212,6 @@ public class DetailsActivity extends AppCompatActivity {
             mOpeningRestaurant.setText("");
         }
     }
-
 
     /**
      * Set up click on Website icon if restaurantInfireStore have one.

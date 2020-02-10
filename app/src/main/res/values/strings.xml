@@ -42,4 +42,9 @@
     <string name="your_lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
     <string name="logout_MAJ">LOGOUT</string>
+    <string name="settings_title_fragment">Settings</string>
+    <string name="logout_title_fragment">Logout</string>
+    <string name="your_lunch_title_fragment">Your Lunch</string>
+    <string name="workmates_title_fragment">Available Workmates</string>
+    <string name="hungry_title_fragment">I\'m Hungry</string>
 </resources>

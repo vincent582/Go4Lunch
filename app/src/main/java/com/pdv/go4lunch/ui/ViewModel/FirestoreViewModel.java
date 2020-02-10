@@ -2,11 +2,14 @@ package com.pdv.go4lunch.ui.ViewModel;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -16,6 +19,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.Restaurant;
+import com.pdv.go4lunch.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
