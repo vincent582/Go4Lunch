@@ -4,14 +4,16 @@ public class Restaurant {
 
     private String id;
     private String name;
+    private String vicinity;
     private int likes;
     private int nbrPeopleEatingHere;
 
     public Restaurant(){}
 
-    public Restaurant (String name,String id){
+    public Restaurant (String name,String id,String vicinity){
         this.name = name;
         this.id = id;
+        this.vicinity = vicinity;
     }
 
     public String getId() {
@@ -39,4 +41,12 @@ public class Restaurant {
     public int getLikes() { return likes; }
 
     public void setLikes(int likes) { this.likes = likes; }
+
+    public String getVicinity() {
+        return vicinity;
+    }
+
+    public void setVicinity(String vicinity) {
+        this.vicinity = vicinity;
+    }
 }

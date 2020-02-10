@@ -8,27 +8,83 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.pdv.go4lunch.API.RestaurantHelper;
+import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Model.Restaurant;
+import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.MainActivity;
+import com.pdv.go4lunch.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationService extends FirebaseMessagingService {
-
-    private String TAG = "Notification Service";
 
     private final int NOTIFICATION_ID = 999;
     private final String NOTIFICATION_TAG = "FIREBASE_NOTIFICATION";
 
+    private FirebaseUser mCurrentUser;
+    private String message;
+    private Restaurant restaurant;
+    private List<User> mUserList = new ArrayList<>();
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getNotification() != null) {
-            String message = remoteMessage.getNotification().getBody();
-            // 8 - Show notification after received message
-            this.sendVisualNotification(message);
+            message = remoteMessage.getNotification().getBody();
+
+            mCurrentUser = Utils.getCurrentUser();
+
+            UserHelper.getUser(mCurrentUser.getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    User user = task.getResult().toObject(User.class);
+                    if (user.getRestaurantId()!=null){
+                        getRestaurant(user.getRestaurantId());
+                    }
+                }
+            });
         }
+    }
+
+    private void getRestaurant(String restaurantId) {
+        RestaurantHelper.getRestaurant(restaurantId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                restaurant = task.getResult().toObject(Restaurant.class);
+                getPeopleEatingThere(restaurantId);
+            }
+        });
+    }
+
+    private void getPeopleEatingThere(String restaurantId) {
+        UserHelper.getAllUserForRestaurant(restaurantId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        User user = doc.toObject(User.class);
+                        mUserList.add(user);
+                    }
+                    sendVisualNotification(message);
+                }
+            }
+        });
     }
 
     private void sendVisualNotification(String messageBody) {
@@ -38,8 +94,19 @@ public class NotificationService extends FirebaseMessagingService {
 
         // 2 - Create a Style for the Notification
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        inboxStyle.setBigContentTitle("Notification");
-        inboxStyle.addLine(messageBody);
+        inboxStyle.setBigContentTitle(getResources().getString(R.string.app_name));
+        inboxStyle.addLine(messageBody +" "+restaurant.getName());
+        inboxStyle.addLine(restaurant.getVicinity());
+
+        String workmates = "";
+        if (!mUserList.isEmpty()){
+            for (User user: mUserList){
+                if (!user.getUserName().equals(mCurrentUser.getDisplayName())) {
+                    workmates += user.getUserName() + " ";
+                }
+            }
+            inboxStyle.addLine(workmates);
+        }
 
         // 3 - Create a Channel (Android 8)
         String channelId = "chanel";
@@ -49,7 +116,7 @@ public class NotificationService extends FirebaseMessagingService {
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.food_background)
                         .setContentTitle(getString(R.string.app_name))
-                        .setContentText("titre de notification")
+                        .setContentText(getResources().getString(R.string.reminder_lunch_notification))
                         .setAutoCancel(true)
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setContentIntent(pendingIntent)
@@ -60,7 +127,7 @@ public class NotificationService extends FirebaseMessagingService {
 
         // 6 - Support Version >= Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Message provenant de Firebase";
+            CharSequence channelName = "Firebase Message";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel mChannel = new NotificationChannel(channelId, channelName, importance);
             notificationManager.createNotificationChannel(mChannel);

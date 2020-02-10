@@ -47,4 +47,5 @@
     <string name="your_lunch_title_fragment">Your Lunch</string>
     <string name="workmates_title_fragment">Available Workmates</string>
     <string name="hungry_title_fragment">I\'m Hungry</string>
+    <string name="reminder_lunch_notification">Reminder of your lunch !</string>
 </resources>

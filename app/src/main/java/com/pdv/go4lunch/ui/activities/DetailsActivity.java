@@ -285,8 +285,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void setUpLikesBtn(){ mLikesBtn.setOnClickListener(v -> checkLikes()); }
-
-
+    
     /**
      * Check if the restaurant in firestore exist
      * if not create the restaurant and add like
@@ -294,7 +293,7 @@ public class DetailsActivity extends AppCompatActivity {
      */
     private void checkLikes(){
         if (restaurantInfireStore == null){
-            RestaurantHelper.createRestaurant(mRestaurant.getPlace_id(),mRestaurant.getName()).addOnSuccessListener(this, new OnSuccessListener<Void>() {
+            RestaurantHelper.createRestaurant(mRestaurant.getPlace_id(),mRestaurant.getName(),mRestaurant.getVicinity()).addOnSuccessListener(this, new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     mFirestoreViewModel.addLikes(mRestaurantId,1);
@@ -337,10 +336,13 @@ public class DetailsActivity extends AppCompatActivity {
      * if already saved cancel it.
      */
     private void updateRestaurantInFirebase() {
-        if (!restaurantInfireStore.getId().equals(mRestaurant.getPlace_id())){
-            RestaurantHelper.createRestaurant(mRestaurant.getPlace_id(),mRestaurant.getName());
+        if (restaurantInfireStore == null){
+            RestaurantHelper.createRestaurant(mRestaurant.getPlace_id(),mRestaurant.getName(),mRestaurant.getVicinity());
+            mFirestoreViewModel.updateNbrOfPeopleForeachRestaurant(this);
         }
-        mFirestoreViewModel.updateNbrOfPeopleForeachRestaurant(this);
+        else if (restaurantInfireStore.getId().equals(mRestaurant.getPlace_id())){
+            mFirestoreViewModel.updateNbrOfPeopleForeachRestaurant(this);
+        }
 
         if (mUser.getRestaurantName() != null && mUser.getRestaurantName().equals(mRestaurant.getName())){
             UserHelper.deleteRestaurantFromUser(Utils.getCurrentUser().getUid());

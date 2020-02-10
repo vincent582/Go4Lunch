@@ -37,7 +37,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
                     mNameWorkmate.setText(user.getUserName()+" "+ itemView.getResources().getString(R.string.joining));
                 }
                 else {
-                    mNameWorkmate.setText(user.getUserName()+" "+itemView.getResources().getString(R.string.is_eating_at) + user.getRestaurantName());
+                    mNameWorkmate.setText(user.getUserName()+" "+itemView.getResources().getString(R.string.is_eating_at)+" "+ user.getRestaurantName());
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

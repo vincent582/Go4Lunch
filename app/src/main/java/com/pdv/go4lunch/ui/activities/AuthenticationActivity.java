@@ -128,11 +128,11 @@ public class AuthenticationActivity extends BaseActivity {
             }
             @Override
             public void onCancel() {
-                Snackbar.make(findViewById(R.id.authentication_layout), String.valueOf(R.string.authentication_canceled), LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_canceled), LENGTH_SHORT).show();
             }
             @Override
             public void onError(FacebookException error) {
-                Snackbar.make(findViewById(R.id.authentication_layout), String.valueOf(R.string.authentication_error), LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_error), LENGTH_SHORT).show();
             }
         });
     }
@@ -151,7 +151,7 @@ public class AuthenticationActivity extends BaseActivity {
                     Log.w("TAG", "handleSignInResult:failed code= " + e.getStatusCode());
                 }
             }else{
-                Snackbar.make(findViewById(R.id.authentication_layout), String.valueOf(R.string.authentication_error), LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_error), LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
         }
@@ -176,7 +176,7 @@ public class AuthenticationActivity extends BaseActivity {
                             createUserInFirestore();
                             startMainActivity();
                         } else {
-                            Snackbar.make(findViewById(R.id.authentication_layout), String.valueOf(R.string.authentication_failed), LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -197,7 +197,7 @@ public class AuthenticationActivity extends BaseActivity {
                             createUserInFirestore();
                             startMainActivity();
                         } else {
-                            Snackbar.make(findViewById(R.id.authentication_layout),String.valueOf(R.string.authentication_failed), LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.authentication_layout),getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
                         }
                     }
                 });

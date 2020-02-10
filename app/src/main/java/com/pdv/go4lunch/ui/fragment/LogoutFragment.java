@@ -75,14 +75,14 @@ public class LogoutFragment extends Fragment {
     @OnClick(R.id.delette_btn)
     public void onClickDeleteButton() {
         new AlertDialog.Builder(getContext())
-                .setMessage(String.valueOf(R.string.delete_account))
-                .setPositiveButton(String.valueOf(R.string.yes), new DialogInterface.OnClickListener() {
+                .setMessage(getResources().getString(R.string.delete_account))
+                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         deleteUserFromFirebase();
                     }
                 })
-                .setNegativeButton(String.valueOf(R.string.no), null)
+                .setNegativeButton(getResources().getString(R.string.no), null)
                 .show();
     }
 
