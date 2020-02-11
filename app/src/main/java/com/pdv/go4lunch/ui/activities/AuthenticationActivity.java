@@ -1,10 +1,13 @@
 package com.pdv.go4lunch.ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +35,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.utils.DialogAuthenticationEmail;
+import com.pdv.go4lunch.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,10 +44,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.internal.Util;
 
 import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
-public class AuthenticationActivity extends BaseActivity {
+public class AuthenticationActivity extends BaseActivity implements DialogAuthenticationEmail.DialogAuthenticationListener {
 
     //FOR DESIGN
     @BindView(R.id.progress_bar_auth)
@@ -91,6 +97,24 @@ public class AuthenticationActivity extends BaseActivity {
     }
 
     /**
+     * Handle onclick Email Button SignIn
+     */
+    @OnClick(R.id.sign_in_email_btn)
+    public void signInWithEmail(){
+        mProgressBar.setVisibility(View.VISIBLE);
+        configureSignInEmail();
+    }
+
+    /**
+     * Handle onclick Google Button SignIn
+     */
+    @OnClick(R.id.sign_in_twitter_btn)
+    public void signInWithTwitter(){
+        mProgressBar.setVisibility(View.VISIBLE);
+        //configureSignInTwitter();
+    }
+
+    /**
      * Handle onclick Facebook button SignIn
      */
     @OnClick(R.id.sign_in_facebook_btn)
@@ -135,6 +159,17 @@ public class AuthenticationActivity extends BaseActivity {
                 Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_error), LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Configure sign-in Email
+     */
+    private void configureSignInEmail() {
+        DialogAuthenticationEmail dialog = new DialogAuthenticationEmail();
+        dialog.show(getSupportFragmentManager(),"DialogAuthentication");
+        if (!dialog.isVisible()){
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -213,6 +248,66 @@ public class AuthenticationActivity extends BaseActivity {
                     mAuth.getCurrentUser().getDisplayName(),
                     mAuth.getCurrentUser().getPhotoUrl().toString()
             ).addOnFailureListener(this.mOnFailureListener());
+        }
+    }
+
+
+    @Override
+    public void onDialogAuthenticationSignInClick(DialogAuthenticationEmail dialogAuthenticationEmail) {
+        EditText editTextMail = dialogAuthenticationEmail.getDialog().findViewById(R.id.email_editText);
+        String email = editTextMail.getText().toString();
+        EditText editTextPassword = dialogAuthenticationEmail.getDialog().findViewById(R.id.password_editText);
+        String password = editTextPassword.getText().toString();
+
+        if (Utils.isEmailValid(email) && password.length() >= 4){
+            mProgressBar.setVisibility(View.VISIBLE);
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                startMainActivity();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }else{
+            mProgressBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.authentication_layout),getResources().getString(R.string.wrong_authentication), LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDialogAuthenticationRegisterClick(DialogAuthenticationEmail dialogAuthenticationEmail) {
+        EditText editTextMail = dialogAuthenticationEmail.getDialog().findViewById(R.id.email_editText);
+        String email = editTextMail.getText().toString();
+        EditText editTextPassword = dialogAuthenticationEmail.getDialog().findViewById(R.id.password_editText);
+        String password = editTextPassword.getText().toString();
+
+        if (Utils.isEmailValid(email) && password.length() >= 4) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, Start mainActivity
+                                UserHelper.createCustomUser(mAuth.getCurrentUser().getUid(),mAuth.getCurrentUser().getDisplayName());
+                                startMainActivity();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }else{
+            mProgressBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.authentication_layout),getResources().getString(R.string.wrong_authentication), LENGTH_SHORT).show();
         }
     }
 }

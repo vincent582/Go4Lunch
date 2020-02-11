@@ -53,4 +53,6 @@
     <string name="notifications_disable">You disable notifications</string>
     <string name="presentation_text_notification">Receive notifications :</string>
     <string name="presentation_text_distance">Distance from your location:</string>
+    <string name="authentication">Authentication</string>
+    <string name="wrong_authentication">Wrong email or password!</string>
 </resources>
