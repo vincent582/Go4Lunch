@@ -114,7 +114,7 @@ public class NotificationService extends FirebaseMessagingService {
         // 4 - Build a Notification object
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.food_background)
+                        .setSmallIcon(R.drawable.ic_logo_auth)
                         .setContentTitle(getString(R.string.app_name))
                         .setContentText(getResources().getString(R.string.reminder_lunch_notification))
                         .setAutoCancel(true)

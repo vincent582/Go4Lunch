@@ -1,5 +1,6 @@
 package com.pdv.go4lunch.ui.ViewModel;
 
+import android.app.Activity;
 import android.location.Location;
 
 import androidx.lifecycle.MutableLiveData;
@@ -20,11 +21,15 @@ public class PlacesViewModel extends ViewModel {
 
     public PlacesViewModel() {}
 
-    public void init(Location location){
+    public void init(Location location, Activity activity){
         if (mListNearestRestaurants != null){
             return;
         }
-        mPlacesRepository = PlacesRepository.getInstance();
+        mPlacesRepository = PlacesRepository.getInstance(activity);
+        mListNearestRestaurants = mPlacesRepository.getNearestRestaurants(location);
+    }
+
+    public void refreshListNearestRestaurants(Location location){
         mListNearestRestaurants = mPlacesRepository.getNearestRestaurants(location);
     }
 
@@ -32,8 +37,8 @@ public class PlacesViewModel extends ViewModel {
             return mListNearestRestaurants;
     }
 
-    public MutableLiveData<Result> getRestaurantDetails(String id){
-        return PlacesRepository.getInstance().getRestaurantDetails(id);
+    public MutableLiveData<Result> getRestaurantDetails(String id,Activity activity){
+        return PlacesRepository.getInstance(activity).getRestaurantDetails(id);
     }
 
     public MutableLiveData<List<Prediction>> getPredictionAutoComplete(String input, Location location, String sessionToken){

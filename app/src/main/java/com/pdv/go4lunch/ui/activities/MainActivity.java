@@ -162,13 +162,17 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Location location) {
                     ((Go4LunchApplication) getApplication()).setMyLocation(location);
-                    mPlacesViewModel.init(location);
-                    mNavController.navigate(R.id.mapFragment);
+                    initViewModel(location);
                 }
             });
         } else {
             Permission.requestLocationPermissions(this);
         }
+    }
+
+    private void initViewModel(Location location) {
+        mPlacesViewModel.init(location,this);
+        mNavController.navigate(R.id.mapFragment);
     }
 
     /**

@@ -1,5 +1,8 @@
 package com.pdv.go4lunch.repository;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 
@@ -20,9 +23,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.pdv.go4lunch.ui.fragment.SettingsFragment.KEY_PREFERENCES_DISTANCE;
+
 public class PlacesRepository {
 
-    private String radius = "100";
+    private SharedPreferences mSharedPreferences;
+
     private String type = "restaurant";
     private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
 
@@ -37,16 +43,17 @@ public class PlacesRepository {
     private GoogleApiService mGoogleApiService;
 
     //REPOSITORY INSTANCE
-    public static PlacesRepository getInstance(){
+    public static PlacesRepository getInstance(Activity activity){
         if (mPlacesRepository == null){
-            mPlacesRepository = new PlacesRepository();
+            mPlacesRepository = new PlacesRepository(activity);
         }
         return mPlacesRepository;
     }
 
     //CONSTRUCTOR
-    public PlacesRepository() {
+    public PlacesRepository(Activity activity) {
         mGoogleApiService = RetrofitInstance.getGoogleService();
+        mSharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
     }
 
     /**
@@ -55,8 +62,9 @@ public class PlacesRepository {
      * @return
      */
     public MutableLiveData<List<Results>> getNearestRestaurants(Location location) {
+        int radius = mSharedPreferences.getInt(KEY_PREFERENCES_DISTANCE,100);
         String locationToString = location.getLatitude()+","+location.getLongitude();
-        Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,radius,type,key);
+        Call<GooglePlaces> call = mGoogleApiService.getNearestPlaces(locationToString,String.valueOf(radius),type,key);
         call.enqueue(new Callback<GooglePlaces>() {
             @Override
             public void onResponse(Call<GooglePlaces> call, Response<GooglePlaces> response) {
@@ -104,8 +112,9 @@ public class PlacesRepository {
      * @return
      */
     public MutableLiveData<List<Prediction>> getAutoCompleteRequest(String input, Location location, String sessionToken){
+        int radius = mSharedPreferences.getInt(KEY_PREFERENCES_DISTANCE,100);
         String locationToString = location.getLatitude()+","+location.getLongitude();
-        Call<AutoComplete> call = mGoogleApiService.getAutoCompleteRequest(input,radius,locationToString,key,sessionToken);
+        Call<AutoComplete> call = mGoogleApiService.getAutoCompleteRequest(input,String.valueOf(radius),locationToString,key,sessionToken);
         call.enqueue(new Callback<AutoComplete>() {
             @Override
             public void onResponse(Call<AutoComplete> call, Response<AutoComplete> response) {

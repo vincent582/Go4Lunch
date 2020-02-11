@@ -118,7 +118,7 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        mPlacesViewModel.getRestaurantDetails(mRestaurantId).observe(this,this::updateView);
+        mPlacesViewModel.getRestaurantDetails(mRestaurantId,this).observe(this,this::updateView);
     }
 
     /**
