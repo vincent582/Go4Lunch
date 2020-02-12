@@ -25,6 +25,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
@@ -33,6 +35,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.OAuthProvider;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.utils.DialogAuthenticationEmail;
@@ -111,7 +114,7 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
     @OnClick(R.id.sign_in_twitter_btn)
     public void signInWithTwitter(){
         mProgressBar.setVisibility(View.VISIBLE);
-        //configureSignInTwitter();
+        configureSignInTwitter();
     }
 
     /**
@@ -169,6 +172,34 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
         dialog.show(getSupportFragmentManager(),"DialogAuthentication");
         if (!dialog.isVisible()){
             mProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Configure sign-in twitter
+     */
+    private void configureSignInTwitter() {
+        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
+        if (pendingResultTask != null) {
+            // There's something already here! Finish the sign-in for your user.
+            pendingResultTask
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    startMainActivity();
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                }
+                            });
+        } else {
+            fireBaseAuthWithTwitter();
         }
     }
 
@@ -236,6 +267,38 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
                         }
                     }
                 });
+    }
+
+    /**
+     * Authentication in firebase with Twitter
+     */
+    private void fireBaseAuthWithTwitter() {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("twitter.com");
+        // There's no pending result so you need to start the sign-in flow.
+        mAuth.startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener(
+                        new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                // User is signed in.
+                                // IdP data available in
+                                // authResult.getAdditionalUserInfo().getProfile().
+                                // The OAuth access token can also be retrieved:
+                                // authResult.getCredential().getAccessToken().
+                                // The OAuth secret can be retrieved by calling:
+                                // authResult.getCredential().getSecret().
+                                createUserInFirestore();
+                                startMainActivity();
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Snackbar.make(findViewById(R.id.authentication_layout), getResources().getString(R.string.authentication_failed), LENGTH_SHORT).show();
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                            }
+                        });
     }
 
     /**
