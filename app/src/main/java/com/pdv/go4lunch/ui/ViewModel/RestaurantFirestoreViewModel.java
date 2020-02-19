@@ -2,14 +2,12 @@ package com.pdv.go4lunch.ui.ViewModel;
 
 import android.app.Activity;
 import android.util.Log;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -19,26 +17,29 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.Restaurant;
-import com.pdv.go4lunch.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirestoreViewModel extends ViewModel {
+public class RestaurantFirestoreViewModel extends ViewModel {
 
-    private MutableLiveData<List<Restaurant>> mListRestaurant = new MutableLiveData<>();
+    private MutableLiveData<List<Restaurant>> mListRestaurantInFirestore = new MutableLiveData<>();
+
+    public void init(){
+        getAllRestaurantInFirestore();
+    }
 
     /**
      * get All restaurant saved in firestore
      * @return
      */
-    public MutableLiveData<List<Restaurant>> getAllRestaurantInFirestore(){
+    private void getAllRestaurantInFirestore(){
         RestaurantHelper.getRestaurantsCollection().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
                     Log.e("TAG", "Listen failed.", e);
-                    mListRestaurant = null;
+                    mListRestaurantInFirestore = null;
                     return;
                 }
                 List<Restaurant> restaurants = new ArrayList<>();
@@ -46,10 +47,13 @@ public class FirestoreViewModel extends ViewModel {
                     Restaurant restaurantItem = document.toObject(Restaurant.class);
                     restaurants.add(restaurantItem);
                 }
-                mListRestaurant.setValue(restaurants);
+                mListRestaurantInFirestore.setValue(restaurants);
             }
         });
-        return mListRestaurant;
+    }
+
+    public MutableLiveData<List<Restaurant>> getListRestaurantInFirestore(){
+        return mListRestaurantInFirestore;
     }
 
     /**
@@ -73,9 +77,9 @@ public class FirestoreViewModel extends ViewModel {
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 for (QueryDocumentSnapshot doc: queryDocumentSnapshots) {
                     Restaurant restaurant = doc.toObject(Restaurant.class);
-                    UserHelper.getAllUserForRestaurant(restaurant.getId()).addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                    UserHelper.getAllUserForRestaurant(restaurant.getId()).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             RestaurantHelper.updateRestaurantNbrPeople(restaurant.getId(),queryDocumentSnapshots.size());
                         }
                     });

@@ -3,6 +3,7 @@ package com.pdv.go4lunch.ui.fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -25,13 +27,15 @@ import com.pdv.go4lunch.Model.AutoComplete.Prediction;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.ViewModel.FirestoreViewModel;
+import com.pdv.go4lunch.ui.ViewModel.RestaurantFirestoreViewModel;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.viewHolder.PlacesRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
 import com.pdv.go4lunch.utils.Utils;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,14 +49,18 @@ public class ListViewFragment extends Fragment {
 
     //FOR DATA
     private PlacesRecyclerViewAdapter adapter = new PlacesRecyclerViewAdapter();
-    private Location myLocation;
-    private List<Restaurant> mRestaurantListFromFirestore = new ArrayList<>();
-    private List<Results> mListRestaurant = new ArrayList<>();
-    private FirestoreViewModel mFirestoreViewModel;
+    private RestaurantFirestoreViewModel mFirestoreViewModel;
     private PlacesViewModel mPlacesViewModel;
+    private Location myLocation;
+    private List<Restaurant> mRestaurantListSavedInFirestore = new ArrayList<>();
+    private List<Results> mListNearestRestaurantFromApi = new ArrayList<>();
+
+    //For Token
+    private String mSessionToken = "12345";
 
     /**
      * Get Location if permission granted
+     * Init viewModels
      * @param savedInstanceState
      */
     @Override
@@ -62,7 +70,7 @@ public class ListViewFragment extends Fragment {
             myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
         }
         mPlacesViewModel = ViewModelProviders.of(getActivity()).get(PlacesViewModel.class);
-        mFirestoreViewModel = ViewModelProviders.of(getActivity()).get(FirestoreViewModel.class);
+        mFirestoreViewModel = ViewModelProviders.of(getActivity()).get(RestaurantFirestoreViewModel.class);
     }
 
     @Override
@@ -71,17 +79,23 @@ public class ListViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
+        configureRecyclerView();
 
-        mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mPlacesViewModel.getListNearestRestaurants().observe(this,this::setDistanceBetweenRestaurantAndSortByNearest);
-
         return view;
     }
 
     /**
-     * Inflate Menu, setUp searchView item.
+     * ConfigureRecyclerView with PlacesRecyclerViewAdapter
+     */
+    private void configureRecyclerView() {
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+    }
+
+    /**
+     * Inflate Menu, setUp searchView item for autocomplete search.
      * @param menu
      * @param inflater
      */
@@ -105,7 +119,7 @@ public class ListViewFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 Log.e("TAG", "onQueryTextSubmit: "+newText );
                 if (newText.isEmpty()){
-                    adapter.updatedPlaces(mListRestaurant,mRestaurantListFromFirestore);
+                    adapter.updatedPlaces(mListNearestRestaurantFromApi, mRestaurantListSavedInFirestore);
                 }
                 else{
                     getPredictionAutocomplete(newText);
@@ -120,7 +134,7 @@ public class ListViewFragment extends Fragment {
      * @param newText
      */
     private void getPredictionAutocomplete(String newText) {
-        mPlacesViewModel.getPredictionAutoComplete(newText,myLocation,"1234").observe(this, this::getPrediction);
+        mPlacesViewModel.getPredictionAutoComplete(newText,myLocation,mSessionToken).observe(this, this::getPrediction);
     }
 
     /**
@@ -131,13 +145,13 @@ public class ListViewFragment extends Fragment {
         List<Results> resultsList = new ArrayList<>();
         resultsList.clear();
         for (Prediction prediction: predictions) {
-            for (Results results: mListRestaurant) {
+            for (Results results: mListNearestRestaurantFromApi) {
                 if (results.getPlaceId().equals(prediction.getPlaceId())){
                     resultsList.add(results);
                 }
             }
         }
-        adapter.updatedPlaces(resultsList,mRestaurantListFromFirestore);
+        adapter.updatedPlaces(resultsList, mRestaurantListSavedInFirestore);
     }
 
     @Override
@@ -147,27 +161,29 @@ public class ListViewFragment extends Fragment {
     }
 
     /**
+     * Get list nearest restaurant from Api
      * Set distance to each restaurant and sort by ascending
+     * then get list of restaurant in Firestore
      */
     private void setDistanceBetweenRestaurantAndSortByNearest(List<Results> results) {
-        mListRestaurant.addAll(results);
-        for (Results restaurant: mListRestaurant) {
+        mListNearestRestaurantFromApi.addAll(results);
+        for (Results restaurant: mListNearestRestaurantFromApi) {
             restaurant.setDistance(Utils.getDistanceBetweenLocation(myLocation,restaurant));
         }
-        Utils.sortByDistance(mListRestaurant);
+        Utils.sortByDistance(mListNearestRestaurantFromApi);
 
-        mFirestoreViewModel.getAllRestaurantInFirestore().observe(this,this::getRestaurantFromFS);
+        mFirestoreViewModel.getListRestaurantInFirestore().observe(this,this::getRestaurantFromFS);
     }
 
     private void getRestaurantFromFS(List<Restaurant> restaurants) {
-        mRestaurantListFromFirestore = restaurants;
+        mRestaurantListSavedInFirestore = restaurants;
         updateUi();
     }
 
     /**
-     * Pass restaurant list to the adapter
+     * Pass both restaurant list to the adapter
      */
     private void updateUi(){
-        adapter.updatedPlaces(mListRestaurant,mRestaurantListFromFirestore);
+        adapter.updatedPlaces(mListNearestRestaurantFromApi, mRestaurantListSavedInFirestore);
     }
 }

@@ -1,17 +1,14 @@
 package com.pdv.go4lunch.ui.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -47,7 +44,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.internal.Util;
 
 import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
@@ -72,7 +68,7 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
 
     /**
      * onStart check if user already Sign In
-     * and start MainActivity
+     * if so start MainActivity
      */
     @Override
     protected void onStart() {
@@ -280,13 +276,6 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
                         new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
-                                // User is signed in.
-                                // IdP data available in
-                                // authResult.getAdditionalUserInfo().getProfile().
-                                // The OAuth access token can also be retrieved:
-                                // authResult.getCredential().getAccessToken().
-                                // The OAuth secret can be retrieved by calling:
-                                // authResult.getCredential().getSecret().
                                 createUserInFirestore();
                                 startMainActivity();
                             }
@@ -314,7 +303,10 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
         }
     }
 
-
+    /**
+     * Get Dialog answer to Sign-in request.
+     * @param dialogAuthenticationEmail
+     */
     @Override
     public void onDialogAuthenticationSignInClick(DialogAuthenticationEmail dialogAuthenticationEmail) {
         EditText editTextMail = dialogAuthenticationEmail.getDialog().findViewById(R.id.email_editText);
@@ -344,6 +336,10 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
         }
     }
 
+    /**
+     * Get Dialog answer to register request.
+     * @param dialogAuthenticationEmail
+     */
     @Override
     public void onDialogAuthenticationRegisterClick(DialogAuthenticationEmail dialogAuthenticationEmail) {
         EditText editTextMail = dialogAuthenticationEmail.getDialog().findViewById(R.id.email_editText);
@@ -359,7 +355,7 @@ public class AuthenticationActivity extends BaseActivity implements DialogAuthen
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, Start mainActivity
-                                UserHelper.createCustomUser(mAuth.getCurrentUser().getUid(),mAuth.getCurrentUser().getDisplayName());
+                                UserHelper.createCustomUser(mAuth.getCurrentUser().getUid(),email);
                                 startMainActivity();
                             } else {
                                 // If sign in fails, display a message to the user.

@@ -75,9 +75,9 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
         for (Restaurant resto: restaurantListFromFirestore) {
             if (resto.getId().equals(restaurant.getPlaceId()) && resto.getLikes() > 0){
-                UserHelper.getAllUsers().addSnapshotListener(new EventListener<QuerySnapshot>() {
+                UserHelper.getAllUsers().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         int nbrOfStars = Utils.getNumberOfStars(queryDocumentSnapshots.size(),resto.getLikes());
                         mRatingRestaurant.setVisibility(View.VISIBLE);
                         mRatingRestaurant.setNumStars(nbrOfStars);
@@ -100,15 +100,16 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
         mAdressRestaurant.setText(restaurant.getVicinity());
         mDistanceRestaurant.setText(restaurant.getDistance()+"m");
 
-        if (restaurant.getOpeningHours().getOpenNow()){
-           mOpeningRestaurant.setText(R.string.open);
-        }
-        else {
-            mOpeningRestaurant.setText(R.string.closed);
-            mOpeningRestaurant.setTextColor(Color.RED);
+        if (restaurant.getOpeningHours() != null) {
+            if (restaurant.getOpeningHours().getOpenNow()) {
+                mOpeningRestaurant.setText(R.string.open);
+            } else {
+                mOpeningRestaurant.setText(R.string.closed);
+                mOpeningRestaurant.setTextColor(Color.RED);
+            }
         }
 
-        //setRestaurantPicture(restaurant);
+        setRestaurantPicture(restaurant);
 
         mItemRestaurant.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), DetailsActivity.class);

@@ -107,7 +107,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:gravity="center"
-            android:text="You didn't choose restaurant for lunch !"
+            android:text="@string/you_didn_t_choose_restaurant_for_lunch"
             android:textColor="@android:color/black"
             android:textSize="24sp" />
     </LinearLayout>

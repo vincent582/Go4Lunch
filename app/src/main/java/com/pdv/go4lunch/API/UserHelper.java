@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.Model.User;
 
 import java.util.HashMap;
@@ -51,12 +52,12 @@ public class UserHelper {
         return docRef.update(updates);
     }
 
-    public static Query getAllUsers(){
-        return UserHelper.getUsersCollection();
+    public static Task<QuerySnapshot> getAllUsers(){
+        return getUsersCollection().get();
     }
 
-    public static Query getAllUserForRestaurant(String restaurantId){
+    public static Task<QuerySnapshot> getAllUserForRestaurant(String restaurantId){
         return UserHelper.getUsersCollection()
-                .whereEqualTo("restaurantId",restaurantId);
+                .whereEqualTo("restaurantId",restaurantId).get();
     }
 }

@@ -5,14 +5,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +27,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
@@ -32,6 +36,8 @@ import com.pdv.go4lunch.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pdv.go4lunch.ui.fragment.SettingsFragment.KEY_PREFERENCES_NOTIFICATION;
 
 public class NotificationService extends FirebaseMessagingService {
 
@@ -45,21 +51,29 @@ public class NotificationService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getNotification() != null) {
-            message = remoteMessage.getNotification().getBody();
+        if (checkSettingsIfReceiveNotificationIsTrue()) {
+            if (remoteMessage.getNotification() != null) {
+                message = remoteMessage.getNotification().getBody();
 
-            mCurrentUser = Utils.getCurrentUser();
+                mCurrentUser = Utils.getCurrentUser();
 
-            UserHelper.getUser(mCurrentUser.getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    User user = task.getResult().toObject(User.class);
-                    if (user.getRestaurantId()!=null){
-                        getRestaurant(user.getRestaurantId());
+                UserHelper.getUser(mCurrentUser.getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        User user = task.getResult().toObject(User.class);
+                        if (user.getRestaurantId() != null) {
+                            getRestaurant(user.getRestaurantId());
+                        }
                     }
-                }
-            });
+                });
+            }
         }
+    }
+
+    private boolean checkSettingsIfReceiveNotificationIsTrue() {
+        SharedPreferences sharedPreferences = getSharedPreferences(KEY_PREFERENCES_NOTIFICATION,MODE_PRIVATE);
+        Boolean checked = sharedPreferences.getBoolean(KEY_PREFERENCES_NOTIFICATION, true);
+        return checked;
     }
 
     private void getRestaurant(String restaurantId) {
@@ -73,9 +87,9 @@ public class NotificationService extends FirebaseMessagingService {
     }
 
     private void getPeopleEatingThere(String restaurantId) {
-        UserHelper.getAllUserForRestaurant(restaurantId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        UserHelper.getAllUserForRestaurant(restaurantId).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (queryDocumentSnapshots != null) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         User user = doc.toObject(User.class);

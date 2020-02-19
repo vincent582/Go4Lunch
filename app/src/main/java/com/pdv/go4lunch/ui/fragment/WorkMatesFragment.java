@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,8 +17,11 @@ import com.google.firebase.firestore.Query;
 import com.pdv.go4lunch.API.UserHelper;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.ui.ViewModel.UsersFirestoreViewModel;
 import com.pdv.go4lunch.ui.viewHolder.UserRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Utils;
+
+import java.util.List;
 
 import static com.pdv.go4lunch.utils.Utils.getCurrentUser;
 
@@ -36,22 +40,18 @@ public class WorkMatesFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_work_mates, container, false);
+
+        UsersFirestoreViewModel usersFirestoreViewModel = ViewModelProviders.of(getActivity()).get(UsersFirestoreViewModel.class);
+        usersFirestoreViewModel.getListUsersInFirestore().observe(this,this::updateUsersForRecyclerView);
+
         RecyclerView mRecyclerView = view.findViewById(R.id.list_works_mates_recycler_view);
-        adapter = new UserRecyclerViewAdapter(generateOptionForAdapter(UserHelper.getAllUsers()));
+        adapter = new UserRecyclerViewAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(adapter);
         return view;
     }
 
-    /**
-     * Generation Option adapter for query request on Firebase.
-     * @param query
-     * @return
-     */
-    private FirestoreRecyclerOptions<User> generateOptionForAdapter(Query query) {
-        return new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(query,User.class)
-                .setLifecycleOwner(this)
-                .build();
+    private void updateUsersForRecyclerView(List<User> userList) {
+        adapter.updateUsers(userList);
     }
 }

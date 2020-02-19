@@ -5,6 +5,18 @@ import android.location.Location;
 
 public class Go4LunchApplication extends Application {
 
+    private static Go4LunchApplication instance;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
+
+    public static Go4LunchApplication getInstance() {
+        return instance;
+    }
+
     public Location myLocation;
 
     public Location getMyLocation() {

@@ -5,10 +5,11 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.pdv.go4lunch"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -75,17 +76,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
-    //Dagger2
-    api 'com.google.dagger:dagger-android:2.25.4'
-    api 'com.google.dagger:dagger-android-support:2.25.4' // if you use the support libraries
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.25.4'
-
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
     //Notification From Firebase
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
+
+    // MULTIDEX
+    implementation 'com.android.support:multidex:1.0.3'
 }
 
 

@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +16,12 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,16 +31,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.AutoComplete.Prediction;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.ViewModel.FirestoreViewModel;
+import com.pdv.go4lunch.ui.ViewModel.RestaurantFirestoreViewModel;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
+import com.pdv.go4lunch.ui.activities.MainActivity;
+import com.pdv.go4lunch.utils.Permission;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -51,25 +59,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     //For DATA
     private PlacesViewModel mPlacesViewModel;
-    private FirestoreViewModel mFirestoreViewModel;
+    private RestaurantFirestoreViewModel mFirestoreViewModel;
     private List<Results> mPlacesFromApi;
-    private List<Restaurant> mRestaurantListInFireStore;
+    private List<Restaurant> mRestaurantListSavedInFireStore;
+
+    //For Token
+    private String mSessionToken = "12345";
+
+    //For Localisation
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mPlacesViewModel = ViewModelProviders.of(getActivity()).get(PlacesViewModel.class);
-        mFirestoreViewModel = ViewModelProviders.of(getActivity()).get(FirestoreViewModel.class);
-        mFirestoreViewModel.getAllRestaurantInFirestore().observe(this,this::getrestaurantInFireStore);
+        mFirestoreViewModel = ViewModelProviders.of(getActivity()).get(RestaurantFirestoreViewModel.class);
+        mFirestoreViewModel.getListRestaurantInFirestore().observe(this, restaurantList -> mRestaurantListSavedInFireStore = restaurantList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        initMap();
+        if (mMap == null) {
+            initMap();
+        }
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (myLocation != null) {
+            putMarkerOnMap(mPlacesFromApi);
+        }
     }
 
     /**
@@ -112,7 +136,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * @param newText
      */
     private void getPredictionAutocomplete(String newText) {
-        mPlacesViewModel.getPredictionAutoComplete(newText,myLocation,"123").observe(this, this::getPrediction);
+        mPlacesViewModel.getPredictionAutoComplete(newText,myLocation,mSessionToken).observe(this, this::getPrediction);
     }
 
     /**
@@ -132,27 +156,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         putMarkerOnMap(resultsList);
     }
 
-    private void getrestaurantInFireStore(List<Restaurant> restaurantList) {
-        mRestaurantListInFireStore = restaurantList;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        myLocation = ((Go4LunchApplication) getActivity().getApplication()).getMyLocation();
-        if (mMap != null){
-            putMarkerOnMap(mPlacesFromApi);
-        }
-    }
-
     /**
      * Initialise map
      */
     private void initMap() {
-        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.map, mapFragment);
-        fragmentTransaction.commit();
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -160,7 +169,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap map) {
         mMap = map;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(),R.raw.style_map_json));
-        updateLocationUI();
+        getLocation();
+    }
+
+    /**
+     * Get Location of the user if permission granted and save in application and request places.
+     * Else ask request permission.
+     */
+    private void getLocation() {
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (Permission.checkIfLocationPermissionGranted(getContext())) {
+            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    myLocation = location;
+                    ((Go4LunchApplication) getActivity().getApplication()).setMyLocation(location);
+                    mPlacesViewModel.init(location, (MainActivity) getActivity());
+                    updateLocationUI();
+                }
+            });
+        } else {
+            Permission.requestLocationPermissions(getActivity());
+        }
     }
 
     /**
@@ -238,7 +268,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     private boolean checkInFirestore(Results place) {
         Boolean b = false;
-        for (Restaurant restaurant: mRestaurantListInFireStore) {
+        for (Restaurant restaurant: mRestaurantListSavedInFireStore) {
             if (restaurant.getId().equals(place.getPlaceId()) && restaurant.getNbrPeopleEatingHere() > 0){
                 b = true;
             }

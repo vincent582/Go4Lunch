@@ -5,22 +5,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 
-public class UserRecyclerViewAdapter extends FirestoreRecyclerAdapter<User,UsersViewHolder> {
+import java.util.List;
 
-    /**
-     * Create a new RecyclerView adapter that listens to a Firestore Query.
-     * See {@link FirestoreRecyclerOptions} for searchable options.
-     * @param options
-     */
-    public UserRecyclerViewAdapter(FirestoreRecyclerOptions<User> options) {
-        super(options);
-    }
+public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UsersViewHolder> {
+
+    private List<User> mUserList;
+
+    public UserRecyclerViewAdapter(){}
 
     @NonNull
     @Override
@@ -30,7 +29,21 @@ public class UserRecyclerViewAdapter extends FirestoreRecyclerAdapter<User,Users
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull UsersViewHolder usersViewHolder, int i, @NonNull User user) {
-        usersViewHolder.updateWithUsers(user);
+    public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
+        holder.updateWithUsers(this.mUserList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mUserList != null) {
+            return mUserList.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public void updateUsers(List<User> userList){
+        this.mUserList = userList;
+        notifyDataSetChanged();
     }
 }

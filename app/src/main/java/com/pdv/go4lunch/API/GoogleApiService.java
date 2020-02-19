@@ -28,11 +28,11 @@ public interface GoogleApiService {
     //https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Jo&types=establishment&location=35.7604138,139.6201991&radius=500&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU&sessiontoken=122333
     @GET("maps/api/place/autocomplete/json?types=establishment&strictbounds")
     Call<AutoComplete> getAutoCompleteRequest(
-      @Query("input") String input,
-      @Query("radius") String radius,
-      @Query("location") String location,
-      @Query("key") String key,
-      @Query("sessiontoken") String sessiontoken
+            @Query("input") String input,
+            @Query("radius") String radius,
+            @Query("location") String location,
+            @Query("key") String key,
+            @Query("sessiontoken") String sessiontoken
     );
 }
 

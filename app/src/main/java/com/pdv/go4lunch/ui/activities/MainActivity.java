@@ -1,11 +1,8 @@
 package com.pdv.go4lunch.ui.activities;
 
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,16 +20,12 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.R;
-import com.pdv.go4lunch.ui.ViewModel.FirestoreViewModel;
+import com.pdv.go4lunch.ui.ViewModel.RestaurantFirestoreViewModel;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
-import com.pdv.go4lunch.utils.Permission;
+import com.pdv.go4lunch.ui.ViewModel.UsersFirestoreViewModel;
 
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_CALL_PHONE;
 import static com.pdv.go4lunch.utils.Permission.PERMISSIONS_REQUEST_FINE_LOCATION;
@@ -47,21 +40,18 @@ public class MainActivity extends BaseActivity {
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
 
-    //For Localisation
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-
     //For DATA
     private PlacesViewModel mPlacesViewModel;
-    private FirestoreViewModel mFirestoreViewModel;
+    private RestaurantFirestoreViewModel mRestaurantFirestoreViewModel;
+    private UsersFirestoreViewModel mUsersFirestoreViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-        mFirestoreViewModel = ViewModelProviders.of(this).get(FirestoreViewModel.class);
+        initViewModels();
+
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,11 +69,23 @@ public class MainActivity extends BaseActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, mNavController);
         updateNavigationDrawerUI(navView);
 
-        getLocation();
-
         addDestinationChangeListenerToNavController();
     }
 
+    /**
+     * configure All view model.
+     */
+    private void initViewModels() {
+        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+        mRestaurantFirestoreViewModel = ViewModelProviders.of(this).get(RestaurantFirestoreViewModel.class);
+        mRestaurantFirestoreViewModel.init();
+        mUsersFirestoreViewModel = ViewModelProviders.of(this).get(UsersFirestoreViewModel.class);
+        mUsersFirestoreViewModel.init();
+    }
+
+    /**
+     * Update View on Destination selected
+     */
     private void addDestinationChangeListenerToNavController() {
         mNavController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
@@ -106,12 +108,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item, mNavController)
-                || super.onOptionsItemSelected(item);
     }
 
     /**
@@ -150,29 +146,6 @@ public class MainActivity extends BaseActivity {
             name.setText(username);
             mail.setText(email);
         }
-    }
-
-    /**
-     * Get Location of the user if permission granted and save in application and request places.
-     * Else ask request permission.
-     */
-    private void getLocation() {
-        if (Permission.checkIfLocationPermissionGranted(this)) {
-            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    ((Go4LunchApplication) getApplication()).setMyLocation(location);
-                    initViewModel(location);
-                }
-            });
-        } else {
-            Permission.requestLocationPermissions(this);
-        }
-    }
-
-    private void initViewModel(Location location) {
-        mPlacesViewModel.init(location,this);
-        mNavController.navigate(R.id.mapFragment);
     }
 
     /**

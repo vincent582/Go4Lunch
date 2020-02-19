@@ -28,13 +28,13 @@ public class DialogAuthenticationEmail extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.authentication_dialog,null))
-                .setPositiveButton("SignIn", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.sign_in), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.onDialogAuthenticationSignInClick(DialogAuthenticationEmail.this);
                     }
                 })
-                .setNegativeButton("Register", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.create_account), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.onDialogAuthenticationRegisterClick(DialogAuthenticationEmail.this);

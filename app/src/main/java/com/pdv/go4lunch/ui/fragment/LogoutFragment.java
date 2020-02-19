@@ -104,6 +104,7 @@ public class LogoutFragment extends Fragment {
             AuthUI.getInstance()
                     .delete(getContext())
                     .addOnSuccessListener(this.killActivity());
+            UserHelper.deleteUser(getCurrentUser().getUid());
         }
     }
 

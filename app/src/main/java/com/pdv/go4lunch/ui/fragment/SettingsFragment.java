@@ -61,6 +61,9 @@ public class SettingsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Update textView distance following progress on seekbar
+     */
     private void setUpSeekBar() {
         int progress = mSharedPreferences.getInt(KEY_PREFERENCES_DISTANCE,100);
         mSeekBar.setProgress(progress);
@@ -72,15 +75,16 @@ public class SettingsFragment extends Fragment {
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
 
+    /**
+     * Saved the boolean on SharePreference to received notification
+     */
     private void setUpSwitchBtn(){
         boolean checked = mSharedPreferences.getBoolean(KEY_PREFERENCES_NOTIFICATION,true);
         mSwitch.setChecked(checked);
@@ -98,6 +102,10 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    /**
+     * Save the distance from seebar in sharedpreferences
+     * then refresh list of nearest restaurant on new distance
+     */
     private void setUpSaveBtn() {
         mButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override

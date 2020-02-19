@@ -55,4 +55,7 @@
     <string name="presentation_text_distance">Distance from your location:</string>
     <string name="authentication">Authentication</string>
     <string name="wrong_authentication">Wrong email or password!</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create account?</string>
+    <string name="you_didn_t_choose_restaurant_for_lunch">You didn\'t choose restaurant for lunch !</string>
 </resources>

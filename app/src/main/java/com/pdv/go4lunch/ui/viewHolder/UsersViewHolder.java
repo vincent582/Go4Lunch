@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.activities.DetailsActivity;
+import com.pdv.go4lunch.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,25 +32,24 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateWithUsers(User user) {
-        if (user != null){
+        if (user != null) {
             if (user.getRestaurantName() != null) {
-                if(itemView.getContext() instanceof DetailsActivity){
-                    mNameWorkmate.setText(user.getUserName()+" "+ itemView.getResources().getString(R.string.joining));
-                }
-                else {
-                    mNameWorkmate.setText(user.getUserName()+" "+itemView.getResources().getString(R.string.is_eating_at)+" "+ user.getRestaurantName());
+                if (itemView.getContext() instanceof DetailsActivity) {
+                    mNameWorkmate.setText(user.getUserName() + " " + itemView.getResources().getString(R.string.joining));
+                } else {
+                    mNameWorkmate.setText(user.getUserName() + " " + itemView.getResources().getString(R.string.is_eating_at) + " " + user.getRestaurantName());
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
-                                intent.putExtra(PLACE_ID, user.getRestaurantId());
-                                v.getContext().startActivity(intent);
+                            Intent intent = new Intent(v.getContext(), DetailsActivity.class);
+                            intent.putExtra(PLACE_ID, user.getRestaurantId());
+                            v.getContext().startActivity(intent);
                         }
                     });
                 }
                 mNameWorkmate.setTextColor(itemView.getResources().getColor(R.color.colorBlack));
-            }else {
-                mNameWorkmate.setText(user.getUserName()+" "+itemView.getResources().getString(R.string.hasnt_decided));
+            } else {
+                mNameWorkmate.setText(user.getUserName() + " " + itemView.getResources().getString(R.string.hasnt_decided));
             }
 
             if (user.getUrlPicture() != null) {
