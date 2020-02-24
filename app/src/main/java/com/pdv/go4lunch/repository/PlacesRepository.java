@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.pdv.go4lunch.API.GoogleApiService;
+import com.pdv.go4lunch.BuildConfig;
 import com.pdv.go4lunch.Model.AutoComplete.AutoComplete;
 import com.pdv.go4lunch.Model.AutoComplete.Prediction;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.GooglePlaces;
@@ -30,7 +31,7 @@ public class PlacesRepository {
     private SharedPreferences mSharedPreferences;
 
     private String type = "restaurant";
-    private String key = "AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
+    private String key = BuildConfig.GOOGLE_API_KEY;
 
     private int callApi = 1;
 

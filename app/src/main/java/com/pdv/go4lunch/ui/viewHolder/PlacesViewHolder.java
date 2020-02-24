@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pdv.go4lunch.API.RestaurantHelper;
 import com.pdv.go4lunch.API.UserHelper;
+import com.pdv.go4lunch.BuildConfig;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
 import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.Restaurant;
@@ -124,7 +125,7 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
      */
     private void setRestaurantPicture(Results restaurant) {
         if (restaurant.getPhotos() != null){
-            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurant.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyDGFBPIUVLpd36GZCrt1LQVL4zCaSbMzxU";
+            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurant.getPhotos().get(0).getPhotoReference()+"&key="+ BuildConfig.GOOGLE_API_KEY;
             Glide.with(mPictureRestaurant.getContext())
                     .load(url)
                     .centerCrop()
