@@ -57,6 +57,11 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
                         .load(user.getUrlPicture())
                         .circleCrop()
                         .into(mPictureWorkmate);
+            }else{
+                Glide.with(mPictureWorkmate.getContext())
+                        .load(R.drawable.no_picture_user)
+                        .circleCrop()
+                        .into(mPictureWorkmate);
             }
         }
     }

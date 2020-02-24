@@ -1,5 +1,7 @@
 package com.pdv.go4lunch.ui.ViewModel;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -32,7 +34,7 @@ public class UsersFirestoreViewModel extends ViewModel {
                 List<User> users = new ArrayList<>();
                 for (QueryDocumentSnapshot document :queryDocumentSnapshots){
                     User usersItem = document.toObject(User.class);
-                    if (!usersItem.getUserName().equals(currentUser.getDisplayName())) {
+                    if (!usersItem.getId().equals(currentUser.getUid())) {
                         users.add(usersItem);
                     }
                 }

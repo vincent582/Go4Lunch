@@ -138,6 +138,11 @@ public class MainActivity extends BaseActivity {
                         .load(getCurrentUser().getPhotoUrl())
                         .circleCrop()
                         .into(user_image);
+            }else {
+                Glide.with(this)
+                        .load(R.drawable.no_picture_user)
+                        .circleCrop()
+                        .into(user_image);
             }
             //Get email & username from Firebase
             String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
