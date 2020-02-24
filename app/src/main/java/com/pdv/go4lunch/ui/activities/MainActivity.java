@@ -159,12 +159,13 @@ public class MainActivity extends BaseActivity {
         if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this,String.valueOf(R.string.permission_granted),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,getResources().getString(R.string.permission_granted),Toast.LENGTH_SHORT).show();
+                mNavController.navigate(R.id.mapFragment);
             }
         }
         else if (requestCode == PERMISSIONS_REQUEST_CALL_PHONE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this,String.valueOf(R.string.permission_call_granted),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.permission_call_granted),Toast.LENGTH_SHORT).show();
             }
         }
     }
