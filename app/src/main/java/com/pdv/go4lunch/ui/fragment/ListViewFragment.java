@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.pdv.go4lunch.Go4LunchApplication;
 import com.pdv.go4lunch.Model.AutoComplete.Prediction;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
@@ -29,6 +30,7 @@ import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.R;
 import com.pdv.go4lunch.ui.ViewModel.RestaurantFirestoreViewModel;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
+import com.pdv.go4lunch.ui.activities.MainActivity;
 import com.pdv.go4lunch.ui.viewHolder.PlacesRecyclerViewAdapter;
 import com.pdv.go4lunch.utils.Permission;
 import com.pdv.go4lunch.utils.Utils;
@@ -79,9 +81,13 @@ public class ListViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        configureRecyclerView();
 
-        mPlacesViewModel.getListNearestRestaurants().observe(this,this::setDistanceBetweenRestaurantAndSortByNearest);
+        if (Permission.checkIfLocationPermissionGranted(getContext())) {
+            configureRecyclerView();
+            mPlacesViewModel.getListNearestRestaurants().observe(this,this::setDistanceBetweenRestaurantAndSortByNearest);
+        } else {
+            Permission.requestLocationPermissions(getActivity());
+        }
         return view;
     }
 
