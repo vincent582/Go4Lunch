@@ -168,7 +168,10 @@ public class ListViewFragment extends Fragment {
     private void setDistanceBetweenRestaurantAndSortByNearest(List<Results> results) {
         mListNearestRestaurantFromApi.addAll(results);
         for (Results restaurant: mListNearestRestaurantFromApi) {
-            restaurant.setDistance(Utils.getDistanceBetweenLocation(myLocation,restaurant));
+            Location placeLocation = new Location("Location");
+            placeLocation.setLatitude(restaurant.getGeometry().getLocation().getLat());
+            placeLocation.setLongitude(restaurant.getGeometry().getLocation().getLng());
+            restaurant.setDistance(Utils.getDistanceBetweenLocation(myLocation,placeLocation));
         }
         Utils.sortByDistance(mListNearestRestaurantFromApi);
 

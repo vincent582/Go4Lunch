@@ -336,7 +336,7 @@ public class DetailsActivity extends AppCompatActivity {
                 //Api give array size 1 if place open 24/7
                 if (restaurant.getOpeningHours().getPeriods().size() > 1){
                     String time = restaurant.getOpeningHours().getPeriods().get(day-1).getClose().getTime();
-                    mOpeningRestaurant.setText(Utils.formatTimeFromOpenningHours(time,this));
+                    mOpeningRestaurant.setText(getResources().getString(R.string.opening_time) +" "+ Utils.formatTimeFromOpenningHours(time));
                 }else {
                     mOpeningRestaurant.setText(getResources().getString(R.string.open_24));
                 }

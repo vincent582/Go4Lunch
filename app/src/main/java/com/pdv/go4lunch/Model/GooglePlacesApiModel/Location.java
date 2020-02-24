@@ -18,7 +18,7 @@ public class Location implements Serializable {
         return lat;
     }
 
-    public void setLat(Double lat) {
+    public void setLat(double v) {
         this.lat = lat;
     }
 

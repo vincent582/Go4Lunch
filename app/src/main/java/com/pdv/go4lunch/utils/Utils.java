@@ -1,6 +1,5 @@
 package com.pdv.go4lunch.utils;
 
-import android.content.Context;
 import android.location.Location;
 
 import androidx.annotation.Nullable;
@@ -8,7 +7,6 @@ import androidx.annotation.Nullable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdv.go4lunch.Model.GooglePlacesApiModel.Results;
-import com.pdv.go4lunch.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,17 +23,13 @@ public abstract class Utils {
 
     public static Boolean isCurrentUserLogged(){ return (getCurrentUser() != null); }
 
-    public static int getDistanceBetweenLocation(Location location1, Results place){
-        Location location = new Location("Location");
-        location.setLatitude(place.getGeometry().getLocation().getLat());
-        location.setLongitude(place.getGeometry().getLocation().getLng());
-
-        float floatDistance = location1.distanceTo(location);
+    public static int getDistanceBetweenLocation(Location myLocation, Location placeLocation){
+        float floatDistance = myLocation.distanceTo(placeLocation);
         int distance = Math.round(floatDistance);
         return distance;
     }
 
-    public static String formatTimeFromOpenningHours(String time, Context context){
+    public static String formatTimeFromOpenningHours(String time){
         Calendar calendar = Calendar.getInstance();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(time);
@@ -45,7 +39,7 @@ public abstract class Utils {
         try {
             Date date = format.parse(String.valueOf(stringBuilder));
             calendar.setTime(date);
-            String result = context.getResources().getString(R.string.opening_time);
+            String result = "";
             if(calendar.get(Calendar.HOUR) == 0){
                 result += "00";
             }else{
