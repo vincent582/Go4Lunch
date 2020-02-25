@@ -56,7 +56,13 @@ public class LogoutFragment extends Fragment {
                         .load(getCurrentUser().getPhotoUrl())
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPictureUser);
+            }else {
+                Glide.with(this)
+                        .load(R.drawable.no_picture_user)
+                        .circleCrop()
+                        .into(mPictureUser);
             }
+
             //Get email & username
             String email = TextUtils.isEmpty(getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : getCurrentUser().getEmail();
             String name = TextUtils.isEmpty(getCurrentUser().getDisplayName()) ? getString(R.string.info_no_username_found) : getCurrentUser().getDisplayName();
