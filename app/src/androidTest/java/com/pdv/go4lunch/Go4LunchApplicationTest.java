@@ -31,7 +31,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-
 @RunWith(AndroidJUnit4ClassRunner.class)
 @LargeTest
 public class Go4LunchApplicationTest {

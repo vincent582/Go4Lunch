@@ -31,6 +31,7 @@ import com.pdv.go4lunch.Model.Place.Result;
 import com.pdv.go4lunch.Model.Restaurant;
 import com.pdv.go4lunch.Model.User;
 import com.pdv.go4lunch.R;
+import com.pdv.go4lunch.ui.ViewModel.DetailsViewModel;
 import com.pdv.go4lunch.ui.ViewModel.RestaurantFirestoreViewModel;
 import com.pdv.go4lunch.ui.ViewModel.PlacesViewModel;
 import com.pdv.go4lunch.ui.ViewModel.UsersFirestoreViewModel;
@@ -83,7 +84,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     //FOR DATA
     private UserRecyclerViewAdapter mAdapter;
-    private PlacesViewModel mPlacesViewModel;
+    private DetailsViewModel mDetailsViewModel;
     private RestaurantFirestoreViewModel mRestaurantFirestoreViewModel;
     private UsersFirestoreViewModel mUsersFirestoreViewModel;
     private String mRestaurantId;
@@ -105,7 +106,7 @@ public class DetailsActivity extends AppCompatActivity {
         getUsersForRestaurant();
         getRestaurantFromFirestore();
 
-        mPlacesViewModel.getRestaurantDetails(mRestaurantId,this).observe(this,this::updateView);
+        mDetailsViewModel.getRestaurantDetails(mRestaurantId).observe(this,this::updateView);
     }
 
     /**
@@ -159,7 +160,8 @@ public class DetailsActivity extends AppCompatActivity {
      */
     private void configureViewModel() {
         mUsersFirestoreViewModel = ViewModelProviders.of(this).get(UsersFirestoreViewModel.class);
-        mPlacesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+        mDetailsViewModel = ViewModelProviders.of(this).get(DetailsViewModel.class);
+        mDetailsViewModel.init(this);
         mRestaurantFirestoreViewModel = ViewModelProviders.of(this).get(RestaurantFirestoreViewModel.class);
     }
 

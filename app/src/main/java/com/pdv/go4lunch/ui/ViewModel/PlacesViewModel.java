@@ -37,10 +37,6 @@ public class PlacesViewModel extends ViewModel {
             return mListNearestRestaurants;
     }
 
-    public MutableLiveData<Result> getRestaurantDetails(String id,Activity activity){
-        return PlacesRepository.getInstance(activity).getRestaurantDetails(id);
-    }
-
     public MutableLiveData<List<Prediction>> getPredictionAutoComplete(String input, Location location, String sessionToken){
         return mPlacesRepository.getAutoCompleteRequest(input,location,sessionToken);
     }

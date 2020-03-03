@@ -9,7 +9,7 @@
         android:id="@+id/mapFragment"
         android:name="com.pdv.go4lunch.ui.fragment.MapFragment"
         android:label="I'm Hungry!"
-        tools:layout="@layout/fragment_map"></fragment>
+        tools:layout="@layout/fragment_map"/>
 
     <fragment
         android:id="@+id/listViewFragment"
@@ -28,11 +28,13 @@
         android:name="com.pdv.go4lunch.ui.fragment.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" />
+
     <fragment
         android:id="@+id/yourLunchFragment"
         android:name="com.pdv.go4lunch.ui.fragment.YourLunchFragment"
         android:label="Your Lunch"
         tools:layout="@layout/fragment_your_lunch"/>
+
     <fragment
         android:id="@+id/logoutFragment"
         android:name="com.pdv.go4lunch.ui.fragment.LogoutFragment"
