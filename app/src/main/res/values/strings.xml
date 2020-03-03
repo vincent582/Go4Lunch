@@ -58,4 +58,5 @@
     <string name="sign_in">Sign In</string>
     <string name="create_account">Create account?</string>
     <string name="you_didn_t_choose_restaurant_for_lunch">You didn\'t choose restaurant for lunch !</string>
+    <string name="goWithWorkmates">You going to have lunch with :</string>
 </resources>

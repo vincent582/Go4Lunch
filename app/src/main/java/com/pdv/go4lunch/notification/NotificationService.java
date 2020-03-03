@@ -112,11 +112,19 @@ public class NotificationService extends FirebaseMessagingService {
         inboxStyle.addLine(messageBody +" "+restaurant.getName());
         inboxStyle.addLine(restaurant.getVicinity());
 
-        String workmates = "";
         if (!mUserList.isEmpty()){
-            for (User user: mUserList){
+            String goWith = getResources().getString(R.string.goWithWorkmates);
+            inboxStyle.addLine(goWith);
+            String workmates = "";
+            int i = 0;
+            for (User user: mUserList) {
+                i++;
                 if (!user.getUserName().equals(mCurrentUser.getDisplayName())) {
-                    workmates += user.getUserName() + " ";
+                    if (i == mUserList.size()){
+                        workmates += user.getUserName()+".";
+                    }else{
+                        workmates += user.getUserName() + " , ";
+                    }
                 }
             }
             inboxStyle.addLine(workmates);

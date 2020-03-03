@@ -54,4 +54,5 @@
     <string name="create_account">Créer compte?</string>
     <string name="sign_in">Se connecter</string>
     <string name="you_didn_t_choose_restaurant_for_lunch">Vous n\'avez pas choisi de restaurant pour votre lunch!</string>
+    <string name="goWithWorkmates">Lunch avec les collègues :</string>
 </resources>
