@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- AUTHENTICATION ACTIVITY -->
+
+    <!-- LOGO -->
+    <dimen name="logo_width">250dp</dimen>
+    <dimen name="logo_height">250dp</dimen>
+
+    <!-- APP NAME -->
+    <dimen name="app_name_text_home_page_size">65sp</dimen>
+    <dimen name="slogan_text_size">18sp</dimen>
+
+    <!-- AUTHENTICATION BUTTON-->
+    <dimen name="auth_button_margin_size">40dp</dimen>
+    <dimen name="auth_button_margin_between">14dp</dimen>
+    <dimen name="auth_button_padding_size">25dp</dimen>
+    <dimen name="auth_button_text_size">24sp</dimen>
+
+    <!-- DETAILS ACTIVITY -->
+
+    <!-- PICTURE RESTAURANT -->
+    <dimen name="picture_restaurant_height">400dp</dimen>
+
+    <!-- ARROW BACK -->
+    <dimen name="arrow_back_margin_start_size">24dp</dimen>
+    <dimen name="arrow_back_margin_top_size">24dp</dimen>
+
+    <!-- FLOATING BUTTON SELECT RESTAURANT -->
+    <dimen name="select_restaurant_fab_margin_end">32dp</dimen>
+
+    <!-- RESTAURANT INFORMATION -->
+    <dimen name="restaurant_information_padding_size">12dp</dimen>
+    <dimen name="restaurant_information_name_text_size">18sp</dimen>
+    <dimen name="restaurant_information_address_text_size">14sp</dimen>
+    <dimen name="restaurant_information_schedule_text_size">14sp</dimen>
+
+    <!-- ICON ACTION-->
+    <dimen name="block_icon_padding_size">15dp</dimen>
+    <dimen name="icon_padding_size">5dp</dimen>
+    <dimen name="icon_text_info_size">14sp</dimen>
+
+    <!-- LOGOUT FRAGMENT -->
+
+    <!-- USER AVATAR -->
+    <dimen name="user_avatar_width">100dp</dimen>
+    <dimen name="user_avatar_height">100dp</dimen>
+    <dimen name="user_information_padding_size">13dp</dimen>
+    <dimen name="user_name_text_size">18sp</dimen>
+    <dimen name="user_email_text_size">14sp</dimen>
+
+    <!-- LOGOUT DELETTE BUTTON -->
+    <dimen name="log_button_margin_side_size">100dp</dimen>
+    <dimen name="logout_button_margin_top_bottom_size">20dp</dimen>
+
+    <!-- SETTINGS FRAGMENT -->
+    <dimen name="settings_fragment_padding_size">30dp</dimen>
+    <dimen name="item_padding_top_bottom_size">20dp</dimen>
+    <dimen name="settings_fragment_text_size">18sp</dimen>
+
+    <!-- YOURLUNCH FRAGMENT -->
+    <dimen name="your_lunch_fragment_text_size">18sp</dimen>
+
+    <!-- HEADER NAV -->
+    <!-- APP NAME -->
+    <dimen name="app_name_header_nav_text_size">36sp</dimen>
+    <dimen name="app_name_header_nav_margin_top_size">50dp</dimen>
+
+    <!-- USER INFO -->
+    <dimen name="user_info_header_nav_margin_start_size">8dp</dimen>
+    <dimen name="user_info_header_nav_margin_top_size">40dp</dimen>
+    <dimen name="user_info_header_nav_margin_bottom_size">12dp</dimen>
+    <dimen name="user_avatar_header_nav_width">70dp</dimen>
+    <dimen name="user_avatar_header_nav_height">70dp</dimen>
+    <dimen name="user_info_header_nav_margin_between_avatar_text_info">5dp</dimen>
+    <dimen name="user_info_header_nav_name_text_size">12sp</dimen>
+    <dimen name="user_info_header_nav_email_text_size">10sp</dimen>
+
+    <!-- BACKGROUND -->
+    <dimen name="picture_nav_background_height">250dp</dimen>
+
+    <!-- ITEM LIST RESTAURANT -->
+    <!-- BLOCK ITEM INFO -->
+    <dimen name="block_restaurant_item_info_margin">2dp</dimen>
+    <dimen name="item_restaurant_name_text_size">15sp</dimen>
+    <dimen name="item_restaurant_info_text_size">12sp</dimen>
+
+    <!-- PICTURE ITEM RESTAURANT -->
+    <dimen name="item_restaurant_picture_width">80dp</dimen>
+    <dimen name="item_restaurant_picture_height">80dp</dimen>
+
+    <!-- ITEM LIST WORKMATES -->
+    <!-- PICTURE ITEM WORKMATE -->
+    <dimen name="item_workmate_picture_width">70dp</dimen>
+    <dimen name="item_workmate_picture_height">70dp</dimen>
+    <dimen name="item_workmate_text_info_size">14sp</dimen>
+
+</resources>

@@ -35,8 +35,6 @@ public class YourLunchFragment extends Fragment {
     //FOR UI
     @BindView(R.id.your_lunch_details_empty_ll)
     LinearLayout mLinearLayoutYourLunchEmpty;
-    @BindView(R.id.your_lunch_details_ll)
-    LinearLayout mLinearLayoutDetails;
 
     private NavController mNavController;
 

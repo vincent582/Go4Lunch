@@ -14,10 +14,7 @@
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_margin="@dimen/block_restaurant_item_info_margin"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
@@ -32,10 +29,10 @@
             android:gravity="fill|fill_horizontal"
             android:singleLine="true"
             android:text="Title"
-            android:textAlignment="textStart"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:textStyle="bold"></TextView>
+            android:textSize="@dimen/item_restaurant_name_text_size"
+            android:textStyle="bold">
+        </TextView>
 
         <TextView
             android:id="@+id/item_adress_restaurant"
@@ -44,7 +41,8 @@
             android:layout_weight="1"
             android:text="French - 12 rue du fauboug Poissonnière"
             android:textAlignment="textStart"
-            android:textSize="12sp"></TextView>
+            android:textSize="@dimen/item_restaurant_info_text_size">
+        </TextView>
 
         <TextView
             android:id="@+id/item_opening_restaurant"
@@ -52,16 +50,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Open until 7pm"
-            android:textSize="12sp"
-            android:textStyle="italic"></TextView>
+            android:textSize="@dimen/item_restaurant_info_text_size"
+            android:textStyle="italic">
+        </TextView>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="50dp"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="@dimen/block_restaurant_item_info_margin"
+        android:layout_marginBottom="@dimen/block_restaurant_item_info_margin"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/item_picture_restaurent"
@@ -90,7 +89,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                app:srcCompat="@drawable/ic_people_black_24dp" />
+                app:srcCompat="@drawable/ic_people_black_24dp"
+                tools:ignore="VectorDrawableCompat" />
 
             <TextView
                 android:id="@+id/number_of_people_text_view"
@@ -129,8 +129,8 @@
 
     <ImageButton
         android:id="@+id/item_picture_restaurent"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/item_restaurant_picture_width"
+        android:layout_height="@dimen/item_restaurant_picture_height"
         android:layout_marginStart="1dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="2dp"
@@ -141,6 +141,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/backgrounds/scenic[3]"></ImageButton>
+        tools:src="@tools:sample/backgrounds/scenic[3]">
+    </ImageButton>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

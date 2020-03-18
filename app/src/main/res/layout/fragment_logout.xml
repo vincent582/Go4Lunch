@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/picture_user_logout_fragment"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/user_avatar_width"
+        android:layout_height="@dimen/user_avatar_height"
         android:layout_gravity="center"
         tools:src="@tools:sample/avatars[1]" />
 
@@ -19,21 +19,21 @@
         android:id="@+id/user_name_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="@dimen/user_information_padding_size"
         android:text="@android:string/unknownName"
         android:textAlignment="center"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="@dimen/user_name_text_size" />
 
     <TextView
         android:id="@+id/user_email_logout_fr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="@dimen/user_information_padding_size"
         android:text="@string/fui_email_field_name"
         android:textAlignment="center"
         android:textColor="@android:color/black"
-        android:textSize="14sp"
+        android:textSize="@dimen/user_email_text_size"
         android:textStyle="italic" />
 
     <Button
@@ -41,10 +41,10 @@
         style="@style/FirebaseUI.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="@dimen/log_button_margin_side_size"
+        android:layout_marginTop="@dimen/logout_button_margin_top_bottom_size"
+        android:layout_marginRight="@dimen/log_button_margin_side_size"
+        android:layout_marginBottom="@dimen/logout_button_margin_top_bottom_size"
         android:background="@color/colorPrimary"
         android:text="@string/logout"
         android:textAlignment="center" />
@@ -54,8 +54,8 @@
         style="@style/FirebaseUI.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp"
+        android:layout_marginLeft="@dimen/log_button_margin_side_size"
+        android:layout_marginRight="@dimen/log_button_margin_side_size"
         android:background="@color/colorPrimaryDark"
         android:text="@string/delete" />
 

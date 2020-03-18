@@ -5,26 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="30dp"
+    android:padding="@dimen/settings_fragment_padding_size"
     tools:context=".ui.fragment.SettingsFragment">
 
     <Switch
         android:id="@+id/switch_settings_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
+        android:paddingTop="@dimen/item_padding_top_bottom_size"
+        android:paddingBottom="@dimen/item_padding_top_bottom_size"
         android:text="@string/presentation_text_notification"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="@dimen/settings_fragment_text_size"
         android:thumbTint="#43A047" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
+        android:paddingTop="@dimen/item_padding_top_bottom_size"
+        android:paddingBottom="@dimen/item_padding_top_bottom_size">
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:text="@string/presentation_text_distance"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="@dimen/settings_fragment_text_size" />
 
         <TextView
             android:id="@+id/nbr_distance_tv"
@@ -42,7 +42,7 @@
             android:text="500m"
             android:textAlignment="textEnd"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/settings_fragment_text_size"
             android:textStyle="italic" />
     </LinearLayout>
 
@@ -52,8 +52,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="500"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
+        android:paddingTop="@dimen/item_padding_top_bottom_size"
+        android:paddingBottom="@dimen/item_padding_top_bottom_size"
         android:progress="100"
         android:progressTint="@color/colorPrimary"
         android:thumbTint="#43A047" />
@@ -61,12 +61,12 @@
     <Button
         android:id="@+id/settings_save_btn"
         style="@android:style/Widget.DeviceDefault.Button"
-        android:layout_width="200dp"
+        android:layout_width="@dimen/log_button_margin_side_size"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:backgroundTint="#E53935"
         android:text="@string/fui_button_text_save"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="@dimen/settings_fragment_text_size" />
 </LinearLayout>

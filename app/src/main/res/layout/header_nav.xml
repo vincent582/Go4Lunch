@@ -4,31 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_nav"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="@dimen/picture_nav_background_height"
     android:background="@drawable/lunch_group">
 
     <TextView
         android:id="@+id/title_drawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/app_name_header_nav_margin_top_size"
         android:fontFamily="serif"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="36sp"
+        android:textSize="@dimen/app_name_header_nav_text_size"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginStart="@dimen/user_info_header_nav_margin_start_size"
+        android:layout_marginTop="@dimen/user_info_header_nav_margin_top_size"
+        android:layout_marginBottom="@dimen/user_info_header_nav_margin_bottom_size"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,14 +39,15 @@
 
         <ImageView
             android:id="@+id/picture_user_drawer"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            tools:srcCompat="@tools:sample/avatars[3]"></ImageView>
+            android:layout_width="@dimen/user_avatar_header_nav_width"
+            android:layout_height="@dimen/user_avatar_header_nav_height"
+            tools:srcCompat="@tools:sample/avatars[3]">
+        </ImageView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="@dimen/user_info_header_nav_margin_between_avatar_text_info"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -56,7 +58,7 @@
                 android:fontFamily="monospace"
                 android:text="John SMITH"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:textSize="@dimen/user_info_header_nav_name_text_size"
                 android:textStyle="bold"></TextView>
 
             <TextView
@@ -64,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
+                android:textSize="@dimen/user_info_header_nav_email_text_size"
                 tools:text="jsmith.1122@gmail.fr"></TextView>
         </LinearLayout>
 
