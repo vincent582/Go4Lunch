@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/auth_button_margin_between"
             android:background="@drawable/radius_btn"
-            android:backgroundTint="@color/com_facebook_button_login_background_color"
+            android:backgroundTint="@color/fui_bgFacebook"
             android:drawableStart="@drawable/f_facebook_logo"
             android:fontFamily="sans-serif"
             android:padding="@dimen/auth_button_padding_size"

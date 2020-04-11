@@ -13,16 +13,9 @@
         android:background="@drawable/border_layout"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/email_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/fui_idp_name_email"
-            android:textColor="@color/colorBlack"
-            android:textSize="14sp" />
-
         <EditText
             android:id="@+id/email_editText"
+            android:hint="@string/fui_idp_name_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -37,17 +30,11 @@
         android:background="@drawable/border_layout"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/password_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/fui_password_hint"
-            android:textColor="@color/colorBlack" />
-
         <EditText
             android:id="@+id/password_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/fui_password_hint"
             android:ems="10"
             android:inputType="textPassword"
             android:textColor="@color/colorBlack" />
