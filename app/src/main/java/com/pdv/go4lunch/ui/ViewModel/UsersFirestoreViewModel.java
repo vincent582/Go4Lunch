@@ -1,7 +1,5 @@
 package com.pdv.go4lunch.ui.ViewModel;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 

@@ -4,18 +4,18 @@
     <!-- AUTHENTICATION ACTIVITY -->
 
     <!-- LOGO -->
-    <dimen name="logo_width">150dp</dimen>
-    <dimen name="logo_height">150dp</dimen>
+    <dimen name="logo_width">100dp</dimen>
+    <dimen name="logo_height">100dp</dimen>
 
     <!-- APP NAME -->
-    <dimen name="app_name_text_home_page_size">50sp</dimen>
+    <dimen name="app_name_text_home_page_size">40sp</dimen>
     <dimen name="slogan_text_size">10sp</dimen>
 
     <!-- AUTHENTICATION BUTTON-->
-    <dimen name="auth_button_margin_size">20dp</dimen>
-    <dimen name="auth_button_margin_between">10dp</dimen>
-    <dimen name="auth_button_padding_size">15dp</dimen>
-    <dimen name="auth_button_text_size">14sp</dimen>
+    <dimen name="auth_button_margin_size">10dp</dimen>
+    <dimen name="auth_button_margin_between">5dp</dimen>
+    <dimen name="auth_button_padding_size">5dp</dimen>
+    <dimen name="auth_button_text_size">12sp</dimen>
 
     <!-- DETAILS ACTIVITY -->
 
